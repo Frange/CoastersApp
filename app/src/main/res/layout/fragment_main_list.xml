@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Spinner
+        android:id="@+id/company_spinner"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/poi_list_filter_height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/park_spinner"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/poi_list_filter_height"
+        app:layout_constraintEnd_toStartOf="@+id/star_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/company_spinner" />
+
+    <ImageView
+        android:id="@+id/star_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@android:drawable/star_on"
+        app:layout_constraintBottom_toBottomOf="@+id/park_spinner"
+        app:layout_constraintEnd_toStartOf="@+id/time_button"
+        app:layout_constraintStart_toEndOf="@+id/park_spinner"
+        app:layout_constraintTop_toTopOf="@+id/park_spinner" />
+
+    <ImageView
+        android:id="@+id/time_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@android:drawable/ic_menu_recent_history"
+        app:layout_constraintBottom_toBottomOf="@+id/park_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/star_button"
+        app:layout_constraintTop_toTopOf="@+id/park_spinner" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/park_spinner"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/park_spinner">
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/color_main_text"
+            android:textSize="@dimen/poi_list_empty_size"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/poi_list_empty_text"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/b_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:gravity="center"
+            android:padding="@dimen/poi_list_empty_button_padding"
+            android:text="@string/poi_list_empty_button_text"
+            android:textColor="@color/color_main_text"
+            android:textSize="@dimen/poi_list_empty_button_size"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_message"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
