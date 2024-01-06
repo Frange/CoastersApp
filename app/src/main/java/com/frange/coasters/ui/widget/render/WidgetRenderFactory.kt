@@ -6,10 +6,11 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.frange.coasters.R
 import com.frange.coasters.domain.model.Ride
-import com.frange.coasters.ui.widget.bk.save.BKWidgetSaveModel
+import com.frange.coasters.ui.widget.WidgetSaveModel
 
 class WidgetRenderFactory(
-    private val context: Context, intent: Intent
+    private val context: Context,
+    intent: Intent
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private var rideList: List<Ride> = emptyList()
@@ -18,7 +19,7 @@ class WidgetRenderFactory(
     }
 
     override fun onDataSetChanged() {
-        rideList = BKWidgetSaveModel.loadData(context)
+        rideList = WidgetSaveModel.loadData(context)
     }
 
     override fun onDestroy() {

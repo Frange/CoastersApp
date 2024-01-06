@@ -1,4 +1,4 @@
-package com.frange.coasters.ui.widget.bk.save;
+package com.frange.coasters.ui.widget;
 
 
 import android.content.Context;
@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BKWidgetSaveModel {
+public class WidgetSaveModel {
 
     private static final String TAG = "MY_WIDGET";
 

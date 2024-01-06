@@ -1,4 +1,4 @@
-package com.frange.coasters.ui.widget.request
+package com.frange.coasters.ui.widget
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -14,7 +14,6 @@ import android.view.View
 import android.widget.RemoteViews
 import com.frange.coasters.data.repository.queue.QueueRepository
 import com.frange.coasters.ui.main.MainActivity
-import com.frange.coasters.ui.widget.bk.save.BKWidgetSaveModel
 import com.frange.coasters.ui.widget.render.WidgetRenderService
 import com.frange.coasters.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +86,7 @@ open class CoasterListWidgetProvider : AppWidgetProvider() {
         widgetContext = aContext
         val aList = queueRepository.getCurrentCoasterList().rideList!!
         if (widgetContext != null) {
-            BKWidgetSaveModel.saveData(widgetContext, aList)
+            WidgetSaveModel.saveData(widgetContext, aList)
             val appWidgetManager = AppWidgetManager.getInstance(widgetContext)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(
                 ComponentName(widgetContext!!, CoasterListWidgetProvider::class.java)

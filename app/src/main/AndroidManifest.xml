@@ -17,7 +17,7 @@
         tools:targetApi="33">
 
         <receiver
-            android:name="com.frange.coasters.ui.widget.request.CoasterListWidgetProvider"
+            android:name="com.frange.coasters.ui.widget.CoasterListWidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
