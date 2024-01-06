@@ -1,4 +1,4 @@
-package com.frange.coasters.ui.widget.render
+package com.frange.coasters.ui.widget
 
 import android.content.Intent
 import android.widget.RemoteViewsService

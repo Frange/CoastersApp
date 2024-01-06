@@ -1,4 +1,4 @@
-package com.frange.coasters.ui.widget.render
+package com.frange.coasters.ui.widget
 
 import android.content.Context
 import android.content.Intent
@@ -6,7 +6,6 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.frange.coasters.R
 import com.frange.coasters.domain.model.Ride
-import com.frange.coasters.ui.widget.WidgetSaveModel
 
 class WidgetRenderFactory(
     private val context: Context,
@@ -39,11 +38,6 @@ class WidgetRenderFactory(
             remoteViews.setTextViewText(
                 R.id.tv_widget_ride_time,
                 "CLOSED"
-            )
-            remoteViews.setInt(
-                R.id.ll_widget_item,
-                "setBackgroundColor",
-                android.R.color.holo_green_dark
             )
         } else {
             remoteViews.setTextViewText(
