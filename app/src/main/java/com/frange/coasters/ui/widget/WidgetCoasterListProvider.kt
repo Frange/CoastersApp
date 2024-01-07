@@ -14,7 +14,17 @@ import android.widget.RemoteViews
 import com.frange.coasters.data.repository.queue.QueueRepository
 import com.frange.coasters.ui.main.MainActivity
 import com.frange.coasters.R
+import com.frange.coasters.data.api.model.coaster.CoasterModel
+import com.frange.coasters.domain.base.AppResult
+import com.frange.coasters.domain.base.Status
+import com.frange.coasters.domain.model.Ride
+import com.frange.coasters.domain.usecase.RequestCoasterUseCase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.util.stream.Collectors.toList
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -22,6 +32,12 @@ open class WidgetCoasterListProvider : AppWidgetProvider() {
 
     @Inject
     lateinit var queueRepository: QueueRepository
+
+    @Inject
+    lateinit var requestCoasterUseCase: RequestCoasterUseCase
+
+    @Inject
+    lateinit var coasterModel: CoasterModel
 
     private var views: RemoteViews? = null
     private var widgetContext: Context? = null
@@ -45,20 +61,73 @@ open class WidgetCoasterListProvider : AppWidgetProvider() {
         }
     }
 
+    private fun fetchRides(): Flow<List<Ride>> = flow {
+        queueRepository.requestRideList().collect { result ->
+            when (result.status) {
+                Status.SUCCESS -> {
+                    emit(result.data ?: emptyList())
+                }
+                Status.ERROR, Status.LOADING, Status.EXCEPTION -> {
+                }
+            }
+        }
+    }
+
+    private fun onUpdateList(context: Context?) {
+        widgetContext = context
+
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                fetchRides().collect { rideList ->
+                    if (widgetContext != null) {
+                        WidgetSaveModel.saveData(widgetContext!!, rideList)
+                        val appWidgetManager = AppWidgetManager.getInstance(widgetContext)
+                        val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                            ComponentName(widgetContext!!, WidgetCoasterListProvider::class.java)
+                        )
+                        appWidgetIds.forEach { appWidgetId ->
+                            if (views == null) {
+                                val intent =
+                                    Intent(widgetContext, WidgetRenderService::class.java).apply {
+                                        data =
+                                            Uri.fromParts("content", appWidgetId.toString(), null)
+                                    }
+
+                                widgetContext?.let {
+                                    views = generateWidgetViews(intent)
+                                }
+                            }
+
+                            if (views != null) {
+                                appWidgetManager.updateAppWidget(appWidgetId, views)
+                            }
+                        }
+                        appWidgetManager.notifyAppWidgetViewDataChanged(
+                            appWidgetIds,
+                            R.id.lv_widget_list
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MY_WIDGET", "Error al obtener datos de la API: $e")
+            }
+        }
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
         appWidgetIds.forEach { appWidgetId ->
+            widgetContext = context
+
             val intent = Intent(context, WidgetRenderService::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
             }
 
-            widgetContext = context
             views = generateWidgetViews(intent)
-
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
@@ -84,33 +153,6 @@ open class WidgetCoasterListProvider : AppWidgetProvider() {
         }
     }
 
-    private fun onUpdateList(context: Context?) {
-        widgetContext = context
-        val aList = queueRepository.getCurrentCoasterList().rideList ?: emptyList()
-        if (widgetContext != null) {
-            WidgetSaveModel.saveData(widgetContext!!, aList)
-            val appWidgetManager = AppWidgetManager.getInstance(widgetContext)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                ComponentName(widgetContext!!, WidgetCoasterListProvider::class.java)
-            )
-            appWidgetIds.forEach { appWidgetId ->
-                if (views == null) {
-                    val intent = Intent(widgetContext, WidgetRenderService::class.java).apply {
-                        data = Uri.fromParts("content", appWidgetId.toString(), null)
-                    }
-
-                    widgetContext?.let {
-                        views = generateWidgetViews(intent)
-                    }
-                }
-
-                if (views != null) {
-                    appWidgetManager.updateAppWidget(appWidgetId, views)
-                }
-            }
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lv_widget_list)
-        }
-    }
 
     // ---------------------- CLICKS
 
