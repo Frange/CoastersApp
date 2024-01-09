@@ -46,14 +46,8 @@ class RideListAdapter(
         fun bind(ride: Ride) {
             itemBinding.name.text = ride.name
 
-            if (ride.waitTime!! < 0) {
+            if (ride.waitTime == null || ride.waitTime < 0) {
                 itemBinding.time.text = "CLOSED"
-                itemBinding.cardView.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        android.R.color.holo_red_dark
-                    )
-                )
             } else {
                 itemBinding.time.text = if (ride.isOpen) {
                     ride.waitTime.toString()

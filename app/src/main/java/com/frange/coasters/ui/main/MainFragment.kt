@@ -223,7 +223,8 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                 Status.SUCCESS -> {
                     if (it.data != null && !it.data.rideList.isNullOrEmpty()) {
                         initCoasterAdapter(it.data.rideList)
-                        rideListAdapter = RideListAdapter(this.requireContext(), it.data.rideList, this)
+                        rideListAdapter =
+                            RideListAdapter(this.requireContext(), it.data.rideList, this)
                         binding?.rvList?.adapter = rideListAdapter
                         binding?.rvList?.visibility = VISIBLE
                         binding?.tvMessage?.visibility = GONE
@@ -266,22 +267,7 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
 
     private fun initCoasterAdapter(coasterList: List<Ride>?) {
         binding?.rvList?.layoutManager = LinearLayoutManager(context)
-        binding?.rvList?.addItemDecoration(DividerItemDecoration(context, 0))
-        coasterList?.sortedBy { coaster -> coaster.name }?.let { updateCoasterList(it) }
-    }
-
-    private fun updateCoasterList(list: List<Ride>) {
-//        if (list.isNotEmpty()) {
-//            coasterListAdapter = CoasterListAdapter(list, this)
-//            binding?.rvList?.adapter = coasterListAdapter
-//            binding?.rvList?.visibility = VISIBLE
-//            binding?.tvMessage?.visibility = GONE
-//        } else {
-//            binding?.rvList?.visibility = GONE
-//            binding?.tvMessage?.visibility = VISIBLE
-//            binding?.tvMessage?.text =
-//                getString(com.jmr.poi.R.string.poi_list_empty_with_filter_text)
-//        }
+        coasterList?.sortedBy { coaster -> coaster.name }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

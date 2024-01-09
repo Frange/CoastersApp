@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"
         android:gravity="center"
-        android:textColor="@color/color_main_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/poi_detail_title_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

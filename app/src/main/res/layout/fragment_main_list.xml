@@ -9,23 +9,37 @@
         android:id="@+id/company_spinner"
         android:layout_width="0dp"
         android:layout_height="@dimen/poi_list_filter_height"
+        android:paddingStart="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="44dp"
+        android:layout_height="56dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="8dp"
+        android:src="@drawable/arrow_sub_down_right_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/company_spinner"
+        app:tint="@color/always_blue" />
 
     <Spinner
         android:id="@+id/park_spinner"
         android:layout_width="0dp"
         android:layout_height="@dimen/poi_list_filter_height"
+        app:layout_constraintBottom_toBottomOf="@+id/arrow"
         app:layout_constraintEnd_toStartOf="@+id/star_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/company_spinner" />
+        app:layout_constraintStart_toEndOf="@+id/arrow" />
 
     <ImageView
         android:id="@+id/star_button"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@android:drawable/star_on"
+        android:padding="12dp"
+        android:src="@drawable/favourite_2_blue"
         app:layout_constraintBottom_toBottomOf="@+id/park_spinner"
         app:layout_constraintEnd_toStartOf="@+id/time_button"
         app:layout_constraintStart_toEndOf="@+id/park_spinner"
@@ -35,7 +49,8 @@
         android:id="@+id/time_button"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@android:drawable/ic_menu_recent_history"
+        android:padding="12dp"
+        android:src="@drawable/time_clock_blue"
         app:layout_constraintBottom_toBottomOf="@+id/park_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/star_button"
@@ -62,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/color_main_text"
+            android:textColor="@color/always_blue"
             android:textSize="@dimen/poi_list_empty_size"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -78,7 +93,7 @@
             android:gravity="center"
             android:padding="@dimen/poi_list_empty_button_padding"
             android:text="@string/poi_list_empty_button_text"
-            android:textColor="@color/color_main_text"
+            android:textColor="@color/primary_text"
             android:textSize="@dimen/poi_list_empty_button_size"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"

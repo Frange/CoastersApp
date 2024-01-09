@@ -18,7 +18,7 @@
     <string name="error_poi_call_message">Se ha producido un error. \nInténtelo de nuevo más tarde.</string>
     <string name="poi_list_empty_button_text">Reintentar</string>
     <string name="no_rides_message">No rides in this park.</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_text">WELCOME</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
 

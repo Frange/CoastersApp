@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="color_primary">#FF821C</color>
-    <color name="color_secondary">#FF5151</color>
-    <color name="color_main_text">#000000</color>
-    <color name="color_secondary_text">#6B707E</color>
-    <color name="color_background">#FFFFFF</color>
+    <color name="primary">#2BA9BC</color>
+    <color name="secondary">#1A98AB</color>
 
-    <color name="color_card_background">#F0F0F0</color>
-    <color name="light_blue_50">#FFE1F5FE</color>
-    <color name="light_blue_200">#FF81D4FA</color>
-    <color name="light_blue_600">#FF039BE5</color>
-    <color name="light_blue_900">#FF01579B</color>
+    <color name="primary_text">#000000</color>
+    <color name="secondary_text">#FFFFFF</color>
+    <color name="third_text">#2BA9BC</color>
+
+    <color name="always_white">#FFFFFF</color>
+    <color name="always_black">#000000</color>
+    <color name="always_blue">#2BA9BC</color>
+
+    <color name="primary_background">#FFFFFF</color>
+    <color name="secondary_background">#2BA9BC</color>
+
+    <color name="card_background">#3C3C3C</color>
 
 </resources>

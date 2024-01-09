@@ -6,6 +6,6 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:padding="10dp"
-    android:textColor="#ffffff"
+    android:textColor="@color/always_blue"
     android:textSize="20sp"
     tools:text="Cargando datos..." />
