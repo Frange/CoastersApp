@@ -65,10 +65,19 @@ class QueueRepositoryImpl @Inject constructor(
         val id = parkList[position].id!!
         val response = service.requestCoasters(id)
         coaster = response.toCoaster()
-        val cleanedRideList = cleanNameList(coaster.rideList)
 
-        val sortedList = if (sortedByTime) coaster.rideList?.sortedBy { it.waitTime }
-        else sortCoasterByStar(coaster.rideList)
+        val rideList = mutableListOf<Ride>()
+        if (!coaster.landList.isNullOrEmpty()) {
+            coaster.landList!!.forEach {
+                if (!it.rideList.isNullOrEmpty()) {
+                    rideList.addAll(it.rideList)
+                }
+            }
+        }
+        coaster.rideList?.let { rideList.addAll(it) }
+
+        val sortedList = if (sortedByTime) rideList.sortedBy { it.waitTime }
+        else sortCoasterByStar(rideList)
 
         coaster.rideList = sortedList
 
@@ -128,23 +137,6 @@ class QueueRepositoryImpl @Inject constructor(
             }
         } else {
             list
-        }
-    }
-
-    private fun cleanNameList(rideList: List<Ride>?): List<Ride>? {
-        rideList?.forEach { cleanName(it.name) }
-
-        return rideList
-    }
-
-    private fun cleanName(name: String?): String? {
-        return when (name) {
-            "Batman Gotham City Escape" -> "Gotham City Escape"
-            "BATMAN: Arkham Asylum" -> "Arkham Asylum"
-            "SUPERMAN™: La Atracción de Acero" -> "Superman"
-            "Coaster Express" -> "Coaster Express (madera)"
-
-            else -> name
         }
     }
 

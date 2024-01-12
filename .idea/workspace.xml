@@ -10,24 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9255f128-e673-476b-b237-f59898d45cea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/ui/main/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/ui/main/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/data/repository/queue/QueueRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/data/repository/queue/QueueRepositoryImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/domain/model/Ride.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/domain/model/Ride.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/ui/main/MainFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/ui/main/MainFragment.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/ui/main/adapter/RideListAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/frange/coasters/ui/main/adapter/RideListAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_poi_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_poi_detail.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_main_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_main_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_poi_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_poi_detail.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/row_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/row_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/view_spinner_adapter.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/view_spinner_adapter.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/widget_big.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/widget_big.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/widget_list_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/widget_list_item.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/widget_loading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/widget_loading.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/widget_preview.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/widget_preview.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +29,44 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/app">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Coasters app" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Coasters app" type="f1a62948:ProjectNode" />
+                <item name="app" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Coasters app" type="f1a62948:ProjectNode" />
+                <item name="app" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Coasters app" type="f1a62948:ProjectNode" />
+                <item name="app" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="other" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -53,6 +81,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2aaTWVMecLjNL3kLl16rbdnNEnv" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -61,19 +92,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DEBUGGABLE_DEVICE": "Pixel_6_API_33 [emulator-5554]",
-    "DEBUGGABLE_PROCESS": "com.frange.coasters",
-    "DEBUGGER_ID": "Auto",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHOW_ALL_PROCESSES": "false",
-    "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/Users/frange/Proyectos/Proyectos_JM/2023/CoastersApp"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DEBUGGABLE_DEVICE&quot;: &quot;Pixel_6_API_33 [emulator-5554]&quot;,
+    &quot;DEBUGGABLE_PROCESS&quot;: &quot;com.frange.coasters&quot;,
+    &quot;DEBUGGER_ID&quot;: &quot;Auto&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHOW_ALL_PROCESSES&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/frange/Proyectos/Proyectos_JM/2023/CoastersApp&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="com.frange.coasters.ui.widget" />
@@ -166,9 +197,17 @@
           <line>164</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/frange/coasters/data/repository/queue/QueueRepositoryImpl.kt</url>
+          <line>68</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
+      <configuration name="AndroidRunConfigurationType">
+        <watch expression="coaster.landList" />
+      </configuration>
       <configuration name="Android Debugger (pid: 16351, debug port: 60429)">
         <watch expression="intent.hasExtra(WIDGET_IDS_KEY)" />
       </configuration>

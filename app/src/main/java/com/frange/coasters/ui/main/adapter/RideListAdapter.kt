@@ -2,6 +2,8 @@ package com.frange.coasters.ui.main.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -46,14 +48,14 @@ class RideListAdapter(
         fun bind(ride: Ride) {
             itemBinding.name.text = ride.name
 
-            if (ride.waitTime == null || ride.waitTime < 0) {
-                itemBinding.time.text = "CLOSED"
+            if (ride.isOpen && ride.waitTime != null && ride.waitTime > 0) {
+                itemBinding.time.text = ride.waitTime.toString()
+                itemBinding.time.visibility = VISIBLE
+                itemBinding.close.visibility = GONE
             } else {
-                itemBinding.time.text = if (ride.isOpen) {
-                    ride.waitTime.toString()
-                } else {
-                    "CLOSED"
-                }
+                itemBinding.time.text = ""
+                itemBinding.time.visibility = GONE
+                itemBinding.close.visibility = VISIBLE
             }
 
             onClick(ride)

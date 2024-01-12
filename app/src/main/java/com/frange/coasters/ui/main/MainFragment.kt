@@ -136,11 +136,6 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
 
                     companySpinnerAdapter.clear()
                     companySpinnerAdapter.addAll(it.data!!)
-//                    companySpinnerAdapter = CompanySpinnerAdapter(
-//                        this.requireContext(),
-//                        R.layout.simple_spinner_item,
-//                        values = it.data!!
-//                    )
                 }
                 Status.EXCEPTION -> {
                     binding?.progressBar?.visibility = GONE
@@ -184,11 +179,9 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
 
                     parkSpinnerAdapter.clear()
                     parkSpinnerAdapter.addAll(it.data!!)
-//                    parkSpinnerAdapter = ParkSpinnerAdapter(
-//                        this.requireContext(),
-//                        R.layout.simple_spinner_item,
-//                        values = it.data!!
-//                    )
+                    currentCoasterPosition = 0
+                    binding?.parkSpinner?.adapter = parkSpinnerAdapter
+                    parkSpinnerAdapter.setNotifyOnChange(true)
                 }
                 Status.EXCEPTION -> {
                     binding?.progressBar?.visibility = GONE

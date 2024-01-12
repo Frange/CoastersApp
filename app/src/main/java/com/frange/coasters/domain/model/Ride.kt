@@ -6,5 +6,5 @@ data class Ride(
     val name: String?,
     val isOpen: Boolean,
     val waitTime: Int?,
-    val lastUpdated: String
+    val lastUpdated: String?
 )
