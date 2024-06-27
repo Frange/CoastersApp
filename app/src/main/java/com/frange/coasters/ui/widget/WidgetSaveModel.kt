@@ -33,11 +33,11 @@ class WidgetSaveModel {
                     if (it.isNotEmpty()) {
                         for (ride in it) {
                             val jsonObject = JSONObject().apply {
-                                put(PARSER_FIELD_ID, ride.id)
-                                put(PARSER_FIELD_NAME, ride.name)
+                                put(PARSER_FIELD_ID, ride.id ?: 0)
+                                put(PARSER_FIELD_NAME, ride.name ?: "-")
                                 put(PARSER_FIELD_IS_OPEN, ride.isOpen)
-                                put(PARSER_FIELD_WAIT_TIME, ride.waitTime)
-                                put(PARSER_FIELD_LAST_UPDATE, ride.lastUpdated)
+                                put(PARSER_FIELD_WAIT_TIME, ride.waitTime ?: 0)
+                                put(PARSER_FIELD_LAST_UPDATE, ride.lastUpdated ?: 0)
                             }
                             jsonArray.put(jsonObject)
                         }

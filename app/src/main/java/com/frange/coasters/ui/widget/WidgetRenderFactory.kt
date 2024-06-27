@@ -2,6 +2,7 @@ package com.frange.coasters.ui.widget
 
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.frange.coasters.R
@@ -34,19 +35,15 @@ class WidgetRenderFactory(
 
         remoteViews.setTextViewText(R.id.tv_widget_ride_name, ride.name)
 
-        if (ride.waitTime!! < 0) {
+        if (ride.isOpen && ride.waitTime != null && ride.waitTime > 0) {
             remoteViews.setTextViewText(
                 R.id.tv_widget_ride_time,
-                "CLOSED"
+                ride.waitTime.toString()
             )
         } else {
             remoteViews.setTextViewText(
                 R.id.tv_widget_ride_time,
-                if (ride.isOpen) {
-                    ride.waitTime.toString()
-                } else {
-                    "CLOSED"
-                }
+                "CLOSED"
             )
         }
 

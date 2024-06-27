@@ -1,6 +1,5 @@
 package com.frange.coasters.ui.main
 
-import android.R
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
@@ -11,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.frange.coasters.R
 import com.frange.coasters.databinding.FragmentMainListBinding
 import com.frange.coasters.domain.base.Status
 import com.frange.coasters.domain.model.Company
@@ -108,7 +107,7 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                 id: Long
             ) {
                 currentCoasterPosition = position
-                mainViewModel.requestCoaster(position, true)
+                mainViewModel.requestCoaster(position, false)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
