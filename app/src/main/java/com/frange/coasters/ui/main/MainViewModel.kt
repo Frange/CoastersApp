@@ -3,12 +3,12 @@ package com.frange.coasters.ui.main
 import android.util.Log
 import androidx.lifecycle.*
 import com.frange.coasters.domain.base.AppResult
-import com.frange.coasters.domain.model.Coaster
-import com.frange.coasters.domain.model.Company
 import com.frange.coasters.domain.model.Park
-import com.frange.coasters.domain.usecase.RequestCoasterUseCase
+import com.frange.coasters.domain.model.Company
+import com.frange.coasters.domain.model.ParkInfo
+import com.frange.coasters.domain.usecase.RequestParkUseCase
 import com.frange.coasters.domain.usecase.RequestCompanyListUseCase
-import com.frange.coasters.domain.usecase.RequestParkListUseCase
+import com.frange.coasters.domain.usecase.RequestParkInfoListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -17,13 +17,13 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val requestCompanyListUseCase: RequestCompanyListUseCase,
-    private val requestCoasterUseCase: RequestCoasterUseCase,
-    private val requestParkListUseCase: RequestParkListUseCase
+    private val requestParkInfoListUseCase: RequestParkInfoListUseCase,
+    private val requestParkUseCase: RequestParkUseCase,
 ) : ViewModel() {
 
     private val companyList = MutableLiveData<AppResult<List<Company>>>()
-    private val parkList = MutableLiveData<AppResult<List<Park>>>()
-    private val coaster = MutableLiveData<AppResult<Coaster>>()
+    private val parkInfoInfoList = MutableLiveData<AppResult<List<ParkInfo>>>()
+    private val parkList = MutableLiveData<AppResult<Park>>()
 
     fun requestCompanyList() {
         viewModelScope.launch {
@@ -37,9 +37,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun requestParkList(id: Int) {
+    fun requestParkInfo(id: Int) {
         viewModelScope.launch {
-            requestParkListUseCase.execute(RequestParkListUseCase.Parameters(id))
+            requestParkInfoListUseCase.execute(RequestParkInfoListUseCase.Parameters(id))
+                .catch {
+                    val exception = it
+                    Log.v("Exception", "Exception", exception)
+                }.collect {
+                    parkInfoInfoList.postValue(it)
+                }
+        }
+    }
+
+    fun requestPark(id: Int, sortedByTime: Boolean) {
+        viewModelScope.launch {
+            requestParkUseCase.execute(RequestParkUseCase.Parameters(id, sortedByTime))
                 .catch {
                     val exception = it
                     Log.v("Exception", "Exception", exception)
@@ -49,28 +61,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun requestCoaster(id: Int, sortedByTime: Boolean) {
-        viewModelScope.launch {
-            requestCoasterUseCase.execute(RequestCoasterUseCase.Parameters(id, sortedByTime))
-                .catch {
-                    val exception = it
-                    Log.v("Exception", "Exception", exception)
-                }.collect {
-                    coaster.postValue(it)
-                }
-        }
-    }
-
     fun getCompanyList(): MutableLiveData<AppResult<List<Company>>> {
         return companyList
     }
 
-    fun getParkList(): MutableLiveData<AppResult<List<Park>>> {
-        return parkList
+    fun getParkList(): MutableLiveData<AppResult<List<ParkInfo>>> {
+        return parkInfoInfoList
     }
 
-    fun getCoaster(): MutableLiveData<AppResult<Coaster>> {
-        return coaster
+    fun getCoaster(): MutableLiveData<AppResult<Park>> {
+        return parkList
     }
 
 }

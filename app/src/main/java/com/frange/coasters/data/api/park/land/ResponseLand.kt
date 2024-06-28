@@ -1,4 +1,4 @@
-package com.frange.coasters.data.api.model.coaster.response.inner
+package com.frange.coasters.data.api.park.land
 
 import com.frange.coasters.domain.model.Land
 import com.frange.coasters.domain.model.Ride

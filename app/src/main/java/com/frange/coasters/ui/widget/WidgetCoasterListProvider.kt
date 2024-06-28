@@ -14,17 +14,15 @@ import android.widget.RemoteViews
 import com.frange.coasters.data.repository.queue.QueueRepository
 import com.frange.coasters.ui.main.MainActivity
 import com.frange.coasters.R
-import com.frange.coasters.data.api.model.coaster.CoasterModel
-import com.frange.coasters.domain.base.AppResult
+import com.frange.coasters.data.api.park.ParkModel
 import com.frange.coasters.domain.base.Status
 import com.frange.coasters.domain.model.Ride
-import com.frange.coasters.domain.usecase.RequestCoasterUseCase
+import com.frange.coasters.domain.usecase.RequestParkUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.stream.Collectors.toList
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,10 +32,10 @@ open class WidgetCoasterListProvider : AppWidgetProvider() {
     lateinit var queueRepository: QueueRepository
 
     @Inject
-    lateinit var requestCoasterUseCase: RequestCoasterUseCase
+    lateinit var requestParkUseCase: RequestParkUseCase
 
     @Inject
-    lateinit var coasterModel: CoasterModel
+    lateinit var parkModel: ParkModel
 
     private var views: RemoteViews? = null
     private var widgetContext: Context? = null

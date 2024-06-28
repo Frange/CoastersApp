@@ -1,13 +1,13 @@
 package com.frange.coasters.di
 
-import com.frange.coasters.data.api.model.coaster.CoasterModel
-import com.frange.coasters.data.api.model.coaster.CoasterModelImpl
-import com.frange.coasters.data.api.model.company.CompanyModel
-import com.frange.coasters.data.api.model.company.CompanyModelImpl
-import com.frange.coasters.data.api.model.park.ParkModel
-import com.frange.coasters.data.api.model.park.ParkModelImpl
-import com.frange.coasters.data.api.model.ride.RideModel
-import com.frange.coasters.data.api.model.ride.RideModelImpl
+import com.frange.coasters.data.api.park.ParkModel
+import com.frange.coasters.data.api.park.ParkModelImpl
+import com.frange.coasters.data.api.company.model.CompanyModel
+import com.frange.coasters.data.api.company.model.CompanyModelImpl
+import com.frange.coasters.data.api.parkinfo.model.ParkInfoModel
+import com.frange.coasters.data.api.parkinfo.model.ParkInfoModelImpl
+import com.frange.coasters.data.api.park.ride.RideModel
+import com.frange.coasters.data.api.park.ride.RideModelImpl
 import com.frange.coasters.data.repository.queue.QueueRepository
 import dagger.Module
 import dagger.Provides
@@ -29,13 +29,13 @@ object ModelModule {
     @Provides
     fun provideParkModel(
         repository: QueueRepository
-    ): ParkModel = ParkModelImpl(repository)
+    ): ParkInfoModel = ParkInfoModelImpl(repository)
 
     @Singleton
     @Provides
     fun provideCoasterModel(
         repository: QueueRepository
-    ): CoasterModel = CoasterModelImpl(repository)
+    ): ParkModel = ParkModelImpl(repository)
 
     @Singleton
     @Provides

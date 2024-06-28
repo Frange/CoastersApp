@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.frange.coasters.databinding.RowMainBinding
 import com.frange.coasters.domain.model.Ride
 
-class RideListAdapter(
+class ParkListAdapter(
     private val context: Context,
     private val rideList: List<Ride>?,
     private val listener: ClickItemListener
-) : RecyclerView.Adapter<RideListAdapter.RideHolder>() {
+) : RecyclerView.Adapter<ParkListAdapter.RideHolder>() {
 
     interface ClickItemListener {
         fun onClicked(ride: Ride)

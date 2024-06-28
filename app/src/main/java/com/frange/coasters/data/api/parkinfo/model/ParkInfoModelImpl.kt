@@ -1,0 +1,18 @@
+package com.frange.coasters.data.api.parkinfo.model
+
+import com.frange.coasters.data.repository.queue.QueueRepository
+import com.frange.coasters.domain.base.AppResult
+import com.frange.coasters.domain.model.ParkInfo
+import kotlinx.coroutines.flow.*
+import javax.inject.Inject
+
+class ParkInfoModelImpl @Inject constructor(
+    private val repository: QueueRepository
+) : ParkInfoModel {
+
+    override fun get(id: Int): Flow<AppResult<List<ParkInfo>>> {
+        return repository.requestParkList(id).transform { result ->
+            emit(result)
+        }
+    }
+}

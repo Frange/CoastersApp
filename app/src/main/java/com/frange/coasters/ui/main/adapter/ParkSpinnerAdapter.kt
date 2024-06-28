@@ -9,16 +9,16 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import com.frange.coasters.domain.model.Park
+import com.frange.coasters.domain.model.ParkInfo
 
 class ParkSpinnerAdapter(
     context: Context,
     @LayoutRes private val layoutResource: Int,
     @IdRes private val textViewResourceId: Int = 0,
-    private val values: List<Park>
-) : ArrayAdapter<Park>(context, layoutResource, values) {
+    private val values: List<ParkInfo>
+) : ArrayAdapter<ParkInfo>(context, layoutResource, values) {
 
-    override fun getItem(position: Int): Park = values[position]
+    override fun getItem(position: Int): ParkInfo = values[position]
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = createViewFromResource(convertView, parent, layoutResource)
@@ -60,7 +60,7 @@ class ParkSpinnerAdapter(
         }
     }
 
-    private fun bindData(value: Park, view: TextView): TextView {
+    private fun bindData(value: ParkInfo, view: TextView): TextView {
         view.text = value.name
         return view
     }

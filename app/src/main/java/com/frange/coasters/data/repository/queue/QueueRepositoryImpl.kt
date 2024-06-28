@@ -1,15 +1,15 @@
 package com.frange.coasters.data.repository.queue
 
 import android.app.Application
+import com.frange.coasters.data.api.park.toPark
 import com.google.gson.Gson
-import com.frange.coasters.data.api.model.coaster.response.inner.toCoaster
 import com.frange.coasters.domain.base.AppResult
-import com.frange.coasters.data.api.model.park.response.ResponseParkList
-import com.frange.coasters.data.api.model.park.response.toCompany
+import com.frange.coasters.data.api.parkinfo.response.ResponseParkList
+import com.frange.coasters.data.api.parkinfo.response.toCompany
 import com.frange.coasters.data.api.service.QueueApiService
-import com.frange.coasters.domain.model.Coaster
-import com.frange.coasters.domain.model.Company
 import com.frange.coasters.domain.model.Park
+import com.frange.coasters.domain.model.Company
+import com.frange.coasters.domain.model.ParkInfo
 import com.frange.coasters.domain.model.Ride
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -29,8 +29,8 @@ class QueueRepositoryImpl @Inject constructor(
     }
 
     private var companyList: List<Company> = arrayListOf()
-    private var parkList: List<Park> = arrayListOf()
-    private var coaster: Coaster = Coaster(arrayListOf(), arrayListOf())
+    private var parkInfoList: List<ParkInfo> = arrayListOf()
+    private var park: Park = Park(arrayListOf(), arrayListOf())
     private lateinit var rideList: List<Ride>
 
     override fun requestCompanyList() = flow {
@@ -50,38 +50,38 @@ class QueueRepositoryImpl @Inject constructor(
     override fun requestParkList(position: Int) = flow {
         emit(AppResult.loading())
 
-        parkList = searchAndSortPark(companyList[position].parkList!!)
+        parkInfoList = searchAndSortPark(companyList[position])
 
-        emit(AppResult.success(parkList))
+        emit(AppResult.success(parkInfoList))
     }.catch {
         emit(
             AppResult.exception(it)
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun requestCoaster(position: Int, sortedByTime: Boolean) = flow {
+    override fun requestPark(position: Int, sortedByTime: Boolean) = flow {
         emit(AppResult.loading())
 
-        val id = parkList[position].id!!
-        val response = service.requestCoasters(id)
-        coaster = response.toCoaster()
+        val id = parkInfoList[position].id!!
+        val response = service.requestPark(id)
+        park = response.toPark()
 
         val rideList = mutableListOf<Ride>()
-        if (!coaster.landList.isNullOrEmpty()) {
-            coaster.landList!!.forEach {
+        if (!park.landList.isNullOrEmpty()) {
+            park.landList!!.forEach {
                 if (!it.rideList.isNullOrEmpty()) {
                     rideList.addAll(it.rideList)
                 }
             }
         }
-        coaster.rideList?.let { rideList.addAll(it) }
+        park.rideList?.let { rideList.addAll(it) }
 
         val sortedList = if (sortedByTime) rideList.sortedBy { it.waitTime }
         else sortCoasterByStar(rideList)
 
-        coaster.rideList = sortedList
+        park.rideList = sortedList
 
-        emit(AppResult.success(coaster))
+        emit(AppResult.success(park))
     }.catch {
         emit(
             AppResult.exception(it)
@@ -91,7 +91,7 @@ class QueueRepositoryImpl @Inject constructor(
     override fun requestRideList() = flow {
         emit(AppResult.loading())
 
-        rideList = coaster.rideList!!
+        rideList = park.rideList!!
 
         emit(AppResult.success(rideList))
     }
@@ -100,12 +100,12 @@ class QueueRepositoryImpl @Inject constructor(
         return companyList
     }
 
-    override fun getCurrentParkList(): List<Park> {
-        return parkList
+    override fun getCurrentParkList(): List<ParkInfo> {
+        return parkInfoList
     }
 
-    override fun getCurrentCoasterList(): Coaster {
-        return coaster
+    override fun getCurrentCoasterList(): Park {
+        return park
     }
 
     private fun searchAndSortCompany(list: List<Company>): List<Company> {
@@ -124,8 +124,11 @@ class QueueRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun searchAndSortPark(list: List<Park>): List<Park> {
-        return if (list.isNotEmpty()) {
+    private fun searchAndSortPark(
+        company: Company
+    ): List<ParkInfo> {
+        val list = company.parks
+        return if (!list.isNullOrEmpty()) {
             val sortedList = list.sortedBy { it.name }
             val index = sortedList.indexOfFirst { it.name == PARK_WARNER }
             if (index != -1) {
@@ -136,7 +139,7 @@ class QueueRepositoryImpl @Inject constructor(
                 sortedList
             }
         } else {
-            list
+            arrayListOf()
         }
     }
 

@@ -27,7 +27,7 @@
         app:tint="@color/always_blue" />
 
     <Spinner
-        android:id="@+id/park_spinner"
+        android:id="@+id/park_info_spinner"
         android:layout_width="0dp"
         android:layout_height="@dimen/poi_list_filter_height"
         app:layout_constraintBottom_toBottomOf="@+id/arrow"
@@ -40,10 +40,10 @@
         android:layout_height="56dp"
         android:padding="14dp"
         android:src="@drawable/favourite_2_blue"
-        app:layout_constraintBottom_toBottomOf="@+id/park_spinner"
+        app:layout_constraintBottom_toBottomOf="@+id/park_info_spinner"
         app:layout_constraintEnd_toStartOf="@+id/time_button"
-        app:layout_constraintStart_toEndOf="@+id/park_spinner"
-        app:layout_constraintTop_toTopOf="@+id/park_spinner" />
+        app:layout_constraintStart_toEndOf="@+id/park_info_spinner"
+        app:layout_constraintTop_toTopOf="@+id/park_info_spinner" />
 
     <ImageView
         android:id="@+id/time_button"
@@ -51,10 +51,10 @@
         android:layout_height="56dp"
         android:padding="14dp"
         android:src="@drawable/time_clock_blue"
-        app:layout_constraintBottom_toBottomOf="@+id/park_spinner"
+        app:layout_constraintBottom_toBottomOf="@+id/park_info_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/star_button"
-        app:layout_constraintTop_toTopOf="@+id/park_spinner" />
+        app:layout_constraintTop_toTopOf="@+id/park_info_spinner" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
@@ -62,7 +62,7 @@
         android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/park_spinner"
+        app:layout_constraintTop_toBottomOf="@+id/park_info_spinner"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/park_spinner">
+        app:layout_constraintTop_toBottomOf="@+id/park_info_spinner">
 
         <TextView
             android:id="@+id/tv_message"

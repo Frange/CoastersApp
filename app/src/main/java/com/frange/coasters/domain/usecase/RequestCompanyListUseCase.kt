@@ -1,6 +1,6 @@
 package com.frange.coasters.domain.usecase
 
-import com.frange.coasters.data.api.model.company.CompanyModel
+import com.frange.coasters.data.api.company.model.CompanyModel
 import com.frange.coasters.domain.base.AppResult
 import com.frange.coasters.domain.base.FlowUseCase
 import com.frange.coasters.domain.model.Company

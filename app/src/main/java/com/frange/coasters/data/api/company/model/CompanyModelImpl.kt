@@ -1,4 +1,4 @@
-package com.frange.coasters.data.api.model.company
+package com.frange.coasters.data.api.company.model
 
 import com.frange.coasters.data.repository.queue.QueueRepository
 import com.frange.coasters.domain.base.AppResult

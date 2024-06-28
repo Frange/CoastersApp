@@ -15,7 +15,7 @@ import com.frange.coasters.R
 import com.frange.coasters.databinding.FragmentMainListBinding
 import com.frange.coasters.domain.base.Status
 import com.frange.coasters.domain.model.Company
-import com.frange.coasters.domain.model.Park
+import com.frange.coasters.domain.model.ParkInfo
 import com.frange.coasters.domain.model.Ride
 import com.frange.coasters.ui.base.BaseFragment
 import com.frange.coasters.ui.main.adapter.*
@@ -23,13 +23,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFragment : BaseFragment<FragmentMainListBinding>(),
-    RideListAdapter.ClickItemListener,
+    ParkListAdapter.ClickItemListener,
     AdapterView.OnItemSelectedListener {
 
     private val mainViewModel: MainViewModel by activityViewModels()
-    private lateinit var rideListAdapter: RideListAdapter
     private lateinit var companySpinnerAdapter: ArrayAdapter<Company>
-    private lateinit var parkSpinnerAdapter: ArrayAdapter<Park>
+    private lateinit var parkInfoSpinnerAdapter: ArrayAdapter<ParkInfo>
+    private lateinit var parkListAdapter: ParkListAdapter
 
     private var currentCoasterPosition = 0
 
@@ -60,10 +60,10 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
         mainRequest()
 
         binding?.starButton?.setOnClickListener {
-            mainViewModel.requestCoaster(currentCoasterPosition, false)
+            mainViewModel.requestPark(currentCoasterPosition, false)
         }
         binding?.timeButton?.setOnClickListener {
-            mainViewModel.requestCoaster(currentCoasterPosition, true)
+            mainViewModel.requestPark(currentCoasterPosition, true)
         }
         binding?.bRetry?.setOnClickListener {
             mainRequest()
@@ -76,13 +76,13 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
             R.layout.simple_spinner_item,
             values = arrayListOf()
         )
-        parkSpinnerAdapter = ParkSpinnerAdapter(
+        parkInfoSpinnerAdapter = ParkSpinnerAdapter(
             this.requireContext(),
             R.layout.simple_spinner_item,
             values = arrayListOf()
         )
         binding?.companySpinner?.adapter = companySpinnerAdapter
-        binding?.parkSpinner?.adapter = parkSpinnerAdapter
+        binding?.parkInfoSpinner?.adapter = parkInfoSpinnerAdapter
 
         binding?.companySpinner?.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
@@ -92,13 +92,13 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                 position: Int,
                 id: Long
             ) {
-                mainViewModel.requestParkList(position)
+                mainViewModel.requestParkInfo(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        binding?.parkSpinner?.onItemSelectedListener = object :
+        binding?.parkInfoSpinner?.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -107,7 +107,7 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                 id: Long
             ) {
                 currentCoasterPosition = position
-                mainViewModel.requestCoaster(position, false)
+                mainViewModel.requestPark(position, false)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -176,11 +176,11 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                     binding?.tvMessage?.visibility = GONE
                     binding?.bRetry?.visibility = GONE
 
-                    parkSpinnerAdapter.clear()
-                    parkSpinnerAdapter.addAll(it.data!!)
+                    parkInfoSpinnerAdapter.clear()
+                    parkInfoSpinnerAdapter.addAll(it.data!!)
                     currentCoasterPosition = 0
-                    binding?.parkSpinner?.adapter = parkSpinnerAdapter
-                    parkSpinnerAdapter.setNotifyOnChange(true)
+                    binding?.parkInfoSpinner?.adapter = parkInfoSpinnerAdapter
+                    parkInfoSpinnerAdapter.setNotifyOnChange(true)
                 }
                 Status.EXCEPTION -> {
                     binding?.progressBar?.visibility = GONE
@@ -215,9 +215,9 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                 Status.SUCCESS -> {
                     if (it.data != null && !it.data.rideList.isNullOrEmpty()) {
                         initCoasterAdapter(it.data.rideList)
-                        rideListAdapter =
-                            RideListAdapter(this.requireContext(), it.data.rideList, this)
-                        binding?.rvList?.adapter = rideListAdapter
+                        parkListAdapter =
+                            ParkListAdapter(this.requireContext(), it.data.rideList, this)
+                        binding?.rvList?.adapter = parkListAdapter
                         binding?.rvList?.visibility = VISIBLE
                         binding?.tvMessage?.visibility = GONE
                         binding?.bRetry?.visibility = GONE

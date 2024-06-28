@@ -1,7 +1,7 @@
-package com.frange.coasters.data.api.model.park.response
+package com.frange.coasters.data.api.parkinfo.response
 
 import com.frange.coasters.domain.model.Company
-import com.frange.coasters.domain.model.Park
+import com.frange.coasters.domain.model.ParkInfo
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -14,11 +14,11 @@ data class ResponseParkData(
     var name: String,
 
     @Json(name = "parks")
-    var parks: List<Park>
+    var parks: List<ParkInfo>
 )
 
 fun ResponseParkData.toCompany() = Company(
     id = id,
     name = name,
-    parkList = parks
+    parks = parks
 )
