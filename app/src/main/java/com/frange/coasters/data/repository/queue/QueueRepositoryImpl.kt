@@ -223,18 +223,20 @@ class QueueRepositoryImpl @Inject constructor(
                 "",
             )
 
-            val withPriorityList = rideList.filter { ride ->
-                if (ride.name in priorityList) {
-                    ride.isFavourite = true
-                    true
-                } else {
-                    false
+            val sortedRides = mutableListOf<Ride>()
+
+            for (rideName in priorityList) {
+                val ride = rideList.find { it.name == rideName }
+                ride?.let {
+                    it.isFavourite = true
+                    sortedRides.add(it)
                 }
             }
 
-            val withoutPriorityList = rideList.filter { it.name !in priorityList }
+            val ridesWithoutPriority = rideList.filter { it.name !in priorityList }
+            sortedRides.addAll(ridesWithoutPriority)
 
-            return withPriorityList + withoutPriorityList
+            return sortedRides
         } else {
             return arrayListOf()
         }
