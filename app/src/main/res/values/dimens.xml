@@ -29,8 +29,8 @@
     <dimen name="poi_list_empty_button_size">16sp</dimen>
     <dimen name="poi_list_empty_button_padding">16dp</dimen>
 
-    <dimen name="item_ride_padding_start">50dp</dimen>
-    <dimen name="item_ride_padding">16dp</dimen>
+    <dimen name="item_ride_padding_start">20dp</dimen>
+    <dimen name="item_ride_padding">8dp</dimen>
 
     <dimen name="widget_margin">0dp</dimen>
 

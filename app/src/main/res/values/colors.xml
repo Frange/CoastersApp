@@ -11,6 +11,7 @@
     <color name="always_white">#FFFFFF</color>
     <color name="always_black">#000000</color>
     <color name="always_blue">#2BA9BC</color>
+    <color name="always_red">#FF0000</color>
 
     <color name="primary_background">#FFFFFF</color>
     <color name="secondary_background">#2BA9BC</color>

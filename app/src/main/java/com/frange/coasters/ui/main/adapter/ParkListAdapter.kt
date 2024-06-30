@@ -2,7 +2,10 @@ package com.frange.coasters.ui.main.adapter
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.frange.coasters.R
@@ -66,14 +69,12 @@ class ParkListAdapter(
                 val view = inflater.inflate(R.layout.item_land, parent, false)
                 LandViewHolder(view)
             }
+
             VIEW_TYPE_RIDE -> {
                 val view = inflater.inflate(R.layout.item_ride, parent, false)
                 RideViewHolder(view)
             }
-            VIEW_TYPE_HEADER -> {
-                val view = inflater.inflate(R.layout.item_land, parent, false)
-                HeaderViewHolder(view)
-            }
+
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -84,9 +85,11 @@ class ParkListAdapter(
             is LandViewHolder -> if (item is Land) {
                 holder.bind(item, expandedLands.contains(item.id))
             }
+
             is RideViewHolder -> if (item is Ride) {
                 holder.bind(item)
             }
+
             is HeaderViewHolder -> if (item is String) {
                 holder.bind(item)
             }
@@ -115,11 +118,23 @@ class ParkListAdapter(
 
     class RideViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val rideNameTextView: TextView = itemView.findViewById(R.id.ride_name)
+        private val rideTimeTextView: TextView = itemView.findViewById(R.id.ride_time)
+        private val rideStatusImageView: ImageView = itemView.findViewById(R.id.ride_status)
 
         fun bind(ride: Ride) {
             rideNameTextView.text = ride.name
+            rideTimeTextView.text = ride.waitTime.toString()
+
+            rideTimeTextView.visibility = if (ride.isOpen) VISIBLE else GONE
+
+            updateStatusCircle(rideStatusImageView, ride.isOpen)
+        }
+
+        private fun updateStatusCircle(imageView: ImageView, isGreen: Boolean) {
+            imageView.isSelected = isGreen
         }
     }
+
 
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val headerTextView: TextView = itemView.findViewById(R.id.land_name)
