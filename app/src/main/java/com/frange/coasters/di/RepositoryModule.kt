@@ -1,6 +1,7 @@
 package com.frange.coasters.di
 
 import android.app.Application
+import com.frange.coasters.data.api.service.MockApiService
 import com.google.gson.Gson
 import com.frange.coasters.data.api.service.QueueApiService
 import com.frange.coasters.data.repository.queue.QueueRepository
@@ -20,7 +21,8 @@ object RepositoryModule {
     fun providePoiRepository(
         application: Application,
         gson: Gson,
-        service: QueueApiService
-    ): QueueRepository = QueueRepositoryImpl(application, gson, service)
+        service: QueueApiService,
+        mockApiService: MockApiService
+    ): QueueRepository = QueueRepositoryImpl(application, gson, service, mockApiService)
 
 }

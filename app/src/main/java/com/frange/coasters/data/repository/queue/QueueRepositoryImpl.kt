@@ -6,11 +6,13 @@ import com.google.gson.Gson
 import com.frange.coasters.domain.base.AppResult
 import com.frange.coasters.data.api.parkinfo.response.ResponseParkList
 import com.frange.coasters.data.api.parkinfo.response.toCompany
+import com.frange.coasters.data.api.service.MockApiService
 import com.frange.coasters.data.api.service.QueueApiService
 import com.frange.coasters.domain.model.Park
 import com.frange.coasters.domain.model.Company
 import com.frange.coasters.domain.model.ParkInfo
 import com.frange.coasters.domain.model.Ride
+import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class QueueRepositoryImpl @Inject constructor(
     private val application: Application,
     private val gson: Gson,
-    private val service: QueueApiService
+    private val service: QueueApiService,
+    private val mockService: MockApiService
 ) : QueueRepository {
 
     companion object {
@@ -33,10 +36,13 @@ class QueueRepositoryImpl @Inject constructor(
     private var park: Park = Park(arrayListOf(), arrayListOf())
     private lateinit var rideList: List<Ride>
 
+    private val isMock = true
+
     override fun requestCompanyList() = flow {
         emit(AppResult.loading())
 
-        val response = service.requestCompanyList()
+        val response =
+            if (isMock) mockService.requestMockCompanyList() else service.requestCompanyList()
         val formatedResponse = gson.fromJson("{list:$response}", ResponseParkList::class.java)
         companyList = searchAndSortCompany(formatedResponse.list?.map { it -> it.toCompany() }!!)
 

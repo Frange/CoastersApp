@@ -69,7 +69,7 @@ class MainViewModel @Inject constructor(
         return parkInfoInfoList
     }
 
-    fun getCoaster(): MutableLiveData<AppResult<Park>> {
+    fun getPark(): MutableLiveData<AppResult<Park>> {
         return parkList
     }
 

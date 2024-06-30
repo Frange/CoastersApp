@@ -23,7 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFragment : BaseFragment<FragmentMainListBinding>(),
-    ParkListAdapter.ClickItemListener,
     AdapterView.OnItemSelectedListener {
 
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -209,14 +208,18 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
             }
         }
 
-        mainViewModel.getCoaster().observe(viewLifecycleOwner) {
+        mainViewModel.getPark().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.LOADING -> {}
                 Status.SUCCESS -> {
                     if (it.data != null && !it.data.rideList.isNullOrEmpty()) {
                         initCoasterAdapter(it.data.rideList)
                         parkListAdapter =
-                            ParkListAdapter(this.requireContext(), it.data.rideList, this)
+                            ParkListAdapter(it.data)
+//                            ParkListAdapter(
+//                                this.requireContext(),
+//                                it.data.rideList,
+//                                this)
                         binding?.rvList?.adapter = parkListAdapter
                         binding?.rvList?.visibility = VISIBLE
                         binding?.tvMessage?.visibility = GONE
@@ -267,10 +270,6 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-
-    }
-
-    override fun onClicked(ride: Ride) {
 
     }
 

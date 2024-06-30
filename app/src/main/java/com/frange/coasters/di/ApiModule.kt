@@ -1,12 +1,16 @@
 package com.frange.coasters.di
 
+import android.app.Application
+import android.content.Context
 import com.google.gson.Gson
 import com.frange.coasters.data.api.service.InfoCaptainApiService
 import com.frange.coasters.data.api.service.QueueApiService
 import com.frange.coasters.data.api.Url
+import com.frange.coasters.data.api.service.MockApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -61,6 +65,14 @@ object ApiModule {
             .build()
 
         return retrofit.create(QueueApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMockApiService(
+        @ApplicationContext context: Context
+    ): MockApiService {
+        return MockApiService(context)
     }
 
     @Singleton

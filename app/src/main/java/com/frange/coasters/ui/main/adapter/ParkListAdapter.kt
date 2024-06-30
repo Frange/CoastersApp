@@ -1,72 +1,135 @@
 package com.frange.coasters.ui.main.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.frange.coasters.databinding.RowMainBinding
+import com.frange.coasters.R
+import com.frange.coasters.domain.model.Land
+import com.frange.coasters.domain.model.Park
 import com.frange.coasters.domain.model.Ride
 
 class ParkListAdapter(
-    private val context: Context,
-    private val rideList: List<Ride>?,
-    private val listener: ClickItemListener
-) : RecyclerView.Adapter<ParkListAdapter.RideHolder>() {
+    private val park: Park
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    interface ClickItemListener {
-        fun onClicked(ride: Ride)
+    companion object {
+        private const val VIEW_TYPE_LAND = 0
+        private const val VIEW_TYPE_RIDE = 1
+        private const val VIEW_TYPE_HEADER = 2
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): RideHolder {
+    private val items: MutableList<Any> = mutableListOf()
+    private val expandedLands = mutableSetOf<Int>()
+    private var isCategoryExpanded = true // Set to true to expand "Sin categoría" by default
 
-        val itemBinding = RowMainBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-
-        return RideHolder(itemBinding)
+    init {
+        // Expand all lands by default
+        park.landList?.forEach { land ->
+            expandedLands.add(land.id)
+        }
+        populateItems()
     }
 
-    override fun onBindViewHolder(holder: RideHolder, position: Int) {
-        if (!rideList.isNullOrEmpty() && position <= rideList.size) {
-            val ride: Ride = rideList[position]
-            holder.bind(ride)
+    private fun populateItems() {
+        items.clear()
+        park.landList?.forEach { land ->
+            items.add(land)
+            if (expandedLands.contains(land.id)) {
+                land.rideList?.let { items.addAll(it) }
+            }
+        }
+        val rideList = park.rideList
+        if (!rideList.isNullOrEmpty()) {
+            items.add("Sin categoría")
+            if (isCategoryExpanded) {
+                items.addAll(rideList)
+            }
+        }
+        notifyDataSetChanged()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (items[position]) {
+            is Land -> VIEW_TYPE_LAND
+            is Ride -> VIEW_TYPE_RIDE
+            is String -> VIEW_TYPE_HEADER
+            else -> throw IllegalArgumentException("Unknown item type at position $position")
         }
     }
 
-    inner class RideHolder(
-        private val itemBinding: RowMainBinding
-    ) : RecyclerView.ViewHolder(itemBinding.root) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            VIEW_TYPE_LAND -> {
+                val view = inflater.inflate(R.layout.item_land, parent, false)
+                LandViewHolder(view)
+            }
+            VIEW_TYPE_RIDE -> {
+                val view = inflater.inflate(R.layout.item_ride, parent, false)
+                RideViewHolder(view)
+            }
+            VIEW_TYPE_HEADER -> {
+                val view = inflater.inflate(R.layout.item_header, parent, false)
+                HeaderViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Unknown view type: $viewType")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = items[position]
+        when (holder) {
+            is LandViewHolder -> if (item is Land) {
+                holder.bind(item, expandedLands.contains(item.id))
+            }
+            is RideViewHolder -> if (item is Ride) {
+                holder.bind(item)
+            }
+            is HeaderViewHolder -> if (item is String) {
+                holder.bind(item)
+            }
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return items.size
+    }
+
+    inner class LandViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val landNameTextView: TextView = itemView.findViewById(R.id.land_name)
+
+        fun bind(land: Land, isExpanded: Boolean) {
+            landNameTextView.text = land.name
+            landNameTextView.setOnClickListener {
+                if (isExpanded) {
+                    expandedLands.remove(land.id)
+                } else {
+                    expandedLands.add(land.id)
+                }
+                populateItems()
+            }
+        }
+    }
+
+    class RideViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val rideNameTextView: TextView = itemView.findViewById(R.id.ride_name)
 
         fun bind(ride: Ride) {
-            itemBinding.name.text = ride.name
-
-            if (ride.isOpen && ride.waitTime != null && ride.waitTime > 0) {
-                itemBinding.time.text = ride.waitTime.toString()
-                itemBinding.time.visibility = VISIBLE
-                itemBinding.close.visibility = GONE
-            } else {
-                itemBinding.time.text = ""
-                itemBinding.time.visibility = GONE
-                itemBinding.close.visibility = VISIBLE
-            }
-
-            onClick(ride)
-        }
-
-        private fun onClick(ride: Ride) {
-            itemBinding.root.setOnClickListener {
-                listener.onClicked(ride)
-            }
+            rideNameTextView.text = ride.name
         }
     }
 
-    override fun getItemCount(): Int = if (rideList.isNullOrEmpty()) 0 else rideList.size
+    inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val headerTextView: TextView = itemView.findViewById(R.id.headerTextView)
 
+        fun bind(headerText: String) {
+            headerTextView.text = headerText
+            headerTextView.setOnClickListener {
+                isCategoryExpanded = !isCategoryExpanded
+                populateItems()
+            }
+        }
+    }
 }
