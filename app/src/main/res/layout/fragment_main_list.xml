@@ -5,15 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Spinner
-        android:id="@+id/company_spinner"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/poi_list_filter_height"
-        android:paddingStart="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/arrow"
         android:layout_width="44dp"
@@ -23,7 +14,7 @@
         android:paddingBottom="8dp"
         android:src="@drawable/arrow_sub_down_right_blue"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/company_spinner"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/always_blue" />
 
     <Spinner

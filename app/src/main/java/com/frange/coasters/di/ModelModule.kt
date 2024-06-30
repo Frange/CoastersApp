@@ -2,8 +2,6 @@ package com.frange.coasters.di
 
 import com.frange.coasters.data.api.park.ParkModel
 import com.frange.coasters.data.api.park.ParkModelImpl
-import com.frange.coasters.data.api.company.model.CompanyModel
-import com.frange.coasters.data.api.company.model.CompanyModelImpl
 import com.frange.coasters.data.api.parkinfo.model.ParkInfoModel
 import com.frange.coasters.data.api.parkinfo.model.ParkInfoModelImpl
 import com.frange.coasters.data.api.park.ride.RideModel
@@ -18,12 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ModelModule {
-
-    @Singleton
-    @Provides
-    fun provideCompanyModel(
-        repository: QueueRepository
-    ): CompanyModel = CompanyModelImpl(repository)
 
     @Singleton
     @Provides

@@ -26,7 +26,6 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
     AdapterView.OnItemSelectedListener {
 
     private val mainViewModel: MainViewModel by activityViewModels()
-    private lateinit var companySpinnerAdapter: ArrayAdapter<Company>
     private lateinit var parkInfoSpinnerAdapter: ArrayAdapter<ParkInfo>
     private lateinit var parkListAdapter: ParkListAdapter
 
@@ -70,32 +69,12 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
     }
 
     private fun initAdapters() {
-        companySpinnerAdapter = CompanySpinnerAdapter(
-            this.requireContext(),
-            R.layout.simple_spinner_item,
-            values = arrayListOf()
-        )
         parkInfoSpinnerAdapter = ParkSpinnerAdapter(
             this.requireContext(),
             R.layout.simple_spinner_item,
             values = arrayListOf()
         )
-        binding?.companySpinner?.adapter = companySpinnerAdapter
         binding?.parkInfoSpinner?.adapter = parkInfoSpinnerAdapter
-
-        binding?.companySpinner?.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                mainViewModel.requestParkInfo(position)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
 
         binding?.parkInfoSpinner?.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
@@ -114,7 +93,7 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
     }
 
     private fun mainRequest() {
-        mainViewModel.requestCompanyList()
+        mainViewModel.requestAllParkInfoList()
     }
 
     private fun initObservers() {
@@ -132,8 +111,6 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                     binding?.tvMessage?.visibility = GONE
                     binding?.bRetry?.visibility = GONE
 
-                    companySpinnerAdapter.clear()
-                    companySpinnerAdapter.addAll(it.data!!)
                 }
                 Status.EXCEPTION -> {
                     binding?.progressBar?.visibility = GONE

@@ -11,7 +11,7 @@ class ParkModelImpl @Inject constructor(
 ) : ParkModel {
 
     override fun get(position: Int, sortedByTime: Boolean): Flow<AppResult<Park>> {
-        return repository.requestPark(position, sortedByTime).transform { result ->
+        return repository.requestParkList(position, sortedByTime).transform { result ->
             emit(result)
         }
     }

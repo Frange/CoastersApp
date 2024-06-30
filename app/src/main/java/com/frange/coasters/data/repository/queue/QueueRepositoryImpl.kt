@@ -10,14 +10,15 @@ import com.frange.coasters.data.api.service.MockApiService
 import com.frange.coasters.data.api.service.QueueApiService
 import com.frange.coasters.domain.model.Park
 import com.frange.coasters.domain.model.Company
+import com.frange.coasters.domain.model.Land
 import com.frange.coasters.domain.model.ParkInfo
 import com.frange.coasters.domain.model.Ride
-import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
+
 
 class QueueRepositoryImpl @Inject constructor(
     private val application: Application,
@@ -26,34 +27,43 @@ class QueueRepositoryImpl @Inject constructor(
     private val mockService: MockApiService
 ) : QueueRepository {
 
-    companion object {
-        const val COMPANY_PARQUES_REUNIDOS = "Parques Reunidos"
-        const val PARK_WARNER = "Parque Warner Madrid"
-    }
-
     private var companyList: List<Company> = arrayListOf()
     private var parkInfoList: List<ParkInfo> = arrayListOf()
     private var park: Park = Park(arrayListOf(), arrayListOf())
     private lateinit var rideList: List<Ride>
+    private lateinit var landList: List<Land>
 
-    private val isMock = true
+    private val isMock = false
 
-    override fun requestCompanyList() = flow {
+    override fun requestAllParkList() = flow {
         emit(AppResult.loading())
 
-        val response =
-            if (isMock) mockService.requestMockCompanyList() else service.requestCompanyList()
-        val formatedResponse = gson.fromJson("{list:$response}", ResponseParkList::class.java)
-        companyList = searchAndSortCompany(formatedResponse.list?.map { it -> it.toCompany() }!!)
+        try {
+            val response =
+                if (isMock)
+                    mockService.requestMockCompanyList()
+                else
+                    service.requestCompanyList()
 
-        emit(AppResult.success(companyList))
-    }.catch {
-        emit(
-            AppResult.exception(it)
-        )
+            val formattedResponse = gson.fromJson("{list:$response}", ResponseParkList::class.java)
+            companyList = searchAndSortCompany(formattedResponse.list?.map { it.toCompany() }!!)
+
+            val allParkInfo = mutableListOf<ParkInfo>()
+
+            companyList.forEach { company ->
+                val parkInfoList = searchAndSortPark(company)
+                allParkInfo.addAll(parkInfoList)
+            }
+
+            parkInfoList = sortFavouriteParkInfoList(allParkInfo)
+
+            emit(AppResult.success(parkInfoList))
+        } catch (e: Exception) {
+            emit(AppResult.exception(e))
+        }
     }.flowOn(Dispatchers.IO)
 
-    override fun requestParkList(position: Int) = flow {
+    override fun requestParkInfoList(position: Int) = flow {
         emit(AppResult.loading())
 
         parkInfoList = searchAndSortPark(companyList[position])
@@ -65,7 +75,7 @@ class QueueRepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun requestPark(position: Int, sortedByTime: Boolean) = flow {
+    override fun requestParkList(position: Int, sortedByTime: Boolean) = flow {
         emit(AppResult.loading())
 
         val id = parkInfoList[position].id!!
@@ -116,18 +126,25 @@ class QueueRepositoryImpl @Inject constructor(
 
     private fun searchAndSortCompany(list: List<Company>): List<Company> {
         return if (list.isNotEmpty()) {
-            val sortedList = list.sortedBy { it.name }
-            val index = sortedList.indexOfFirst { it.name == COMPANY_PARQUES_REUNIDOS }
-            if (index != -1) {
-                mutableListOf(sortedList[index]).apply {
-                    addAll(sortedList.filterNot { it.name == COMPANY_PARQUES_REUNIDOS })
-                }
-            } else {
-                sortedList
-            }
+            list.sortedBy { it.name }
         } else {
             list
         }
+    }
+
+    private fun sortFavouriteParkInfoList(parkInfoList: List<ParkInfo>): List<ParkInfo> {
+        val priorityOrder = listOf(
+            "Parque Warner Madrid",
+            "Parque de Atracciones Madrid",
+            "Europa Park",
+            "Phantasialand"
+        )
+
+        val otherParks = parkInfoList.filter { it.name !in priorityOrder }
+        val sortedPriorityParks = priorityOrder.mapNotNull { name ->
+            parkInfoList.find { it.name == name }
+        }
+        return sortedPriorityParks + otherParks.sortedBy { it.name }
     }
 
     private fun searchAndSortPark(
@@ -135,15 +152,7 @@ class QueueRepositoryImpl @Inject constructor(
     ): List<ParkInfo> {
         val list = company.parks
         return if (!list.isNullOrEmpty()) {
-            val sortedList = list.sortedBy { it.name }
-            val index = sortedList.indexOfFirst { it.name == PARK_WARNER }
-            if (index != -1) {
-                mutableListOf(sortedList[index]).apply {
-                    addAll(sortedList.filterNot { it.name == PARK_WARNER })
-                }
-            } else {
-                sortedList
-            }
+            list.sortedBy { it.name }
         } else {
             arrayListOf()
         }

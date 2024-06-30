@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="@dimen/item_ride_padding"
+    android:paddingTop="@dimen/item_ride_padding"
+    android:paddingEnd="@dimen/item_ride_padding"
+    android:paddingBottom="@dimen/item_ride_padding">
 
     <TextView
         android:id="@+id/land_name"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="24sp" />
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

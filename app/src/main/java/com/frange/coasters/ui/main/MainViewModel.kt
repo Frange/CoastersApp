@@ -6,8 +6,8 @@ import com.frange.coasters.domain.base.AppResult
 import com.frange.coasters.domain.model.Park
 import com.frange.coasters.domain.model.Company
 import com.frange.coasters.domain.model.ParkInfo
+import com.frange.coasters.domain.usecase.RequestAllParkInfoListUseCase
 import com.frange.coasters.domain.usecase.RequestParkUseCase
-import com.frange.coasters.domain.usecase.RequestCompanyListUseCase
 import com.frange.coasters.domain.usecase.RequestParkInfoListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -16,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val requestCompanyListUseCase: RequestCompanyListUseCase,
-    private val requestParkInfoListUseCase: RequestParkInfoListUseCase,
+    private val requestCompanyListUseCase: RequestAllParkInfoListUseCase,
     private val requestParkUseCase: RequestParkUseCase,
 ) : ViewModel() {
 
@@ -25,21 +24,9 @@ class MainViewModel @Inject constructor(
     private val parkInfoInfoList = MutableLiveData<AppResult<List<ParkInfo>>>()
     private val parkList = MutableLiveData<AppResult<Park>>()
 
-    fun requestCompanyList() {
+    fun requestAllParkInfoList() {
         viewModelScope.launch {
             requestCompanyListUseCase.execute()
-                .catch {
-                    val exception = it
-                    Log.v("Exception", "Exception", exception)
-                }.collect {
-                    companyList.postValue(it)
-                }
-        }
-    }
-
-    fun requestParkInfo(id: Int) {
-        viewModelScope.launch {
-            requestParkInfoListUseCase.execute(RequestParkInfoListUseCase.Parameters(id))
                 .catch {
                     val exception = it
                     Log.v("Exception", "Exception", exception)

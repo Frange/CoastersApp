@@ -3,7 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="@dimen/item_ride_padding_start"
+    android:paddingTop="@dimen/item_ride_padding"
+    android:paddingEnd="@dimen/item_ride_padding"
+    android:paddingBottom="@dimen/item_ride_padding">
 
     <TextView
         android:id="@+id/ride_name"

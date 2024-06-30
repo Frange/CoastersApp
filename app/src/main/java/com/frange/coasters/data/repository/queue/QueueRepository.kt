@@ -9,9 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface QueueRepository {
 
-    fun requestCompanyList(): Flow<AppResult<List<Company>>>
-    fun requestParkList(position: Int): Flow<AppResult<List<ParkInfo>>>
-    fun requestPark(position: Int, sortedByTime: Boolean): Flow<AppResult<Park>>
+    fun requestAllParkList(): Flow<AppResult<List<ParkInfo>>>
+
+    fun requestParkInfoList(position: Int): Flow<AppResult<List<ParkInfo>>>
+    fun requestParkList(position: Int, sortedByTime: Boolean): Flow<AppResult<Park>>
     fun requestRideList(): Flow<AppResult<List<Ride>>>
 
     fun getCurrentCompanyList(): List<Company>
