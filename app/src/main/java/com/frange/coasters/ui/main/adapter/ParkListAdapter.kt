@@ -42,7 +42,7 @@ class ParkListAdapter(
         }
         val rideList = park.rideList
         if (!rideList.isNullOrEmpty()) {
-            items.add("Sin categoría")
+//            items.add("Sin categoría")
             if (isCategoryExpanded) {
                 items.addAll(rideList)
             }
@@ -71,7 +71,7 @@ class ParkListAdapter(
                 RideViewHolder(view)
             }
             VIEW_TYPE_HEADER -> {
-                val view = inflater.inflate(R.layout.item_header, parent, false)
+                val view = inflater.inflate(R.layout.item_land, parent, false)
                 HeaderViewHolder(view)
             }
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
@@ -122,7 +122,7 @@ class ParkListAdapter(
     }
 
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val headerTextView: TextView = itemView.findViewById(R.id.headerTextView)
+        private val headerTextView: TextView = itemView.findViewById(R.id.land_name)
 
         fun bind(headerText: String) {
             headerTextView.text = headerText
