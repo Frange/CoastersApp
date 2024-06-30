@@ -27,10 +27,9 @@ class ParkListAdapter(
 
     private val items: MutableList<Any> = mutableListOf()
     private val expandedLands = mutableSetOf<Int>()
-    private var isCategoryExpanded = true // Set to true to expand "Sin categoría" by default
+    private var isCategoryExpanded = true
 
     init {
-        // Expand all lands by default
         park.landList?.forEach { land ->
             expandedLands.add(land.id)
         }
@@ -48,15 +47,11 @@ class ParkListAdapter(
         }
         val rideList = park.rideList
         if (!rideList.isNullOrEmpty()) {
+            items.add(Land(0, "Atracciones", arrayListOf()))
             if (isCategoryExpanded) {
                 items.addAll(rideList)
             }
         }
-        notifyDataSetChanged()
-    }
-
-    fun clearItems() {
-        items.clear()
         notifyDataSetChanged()
     }
 
