@@ -10,8 +10,8 @@ class ParkModelImpl @Inject constructor(
     private val repository: QueueRepository
 ) : ParkModel {
 
-    override fun get(position: Int, sortedByTime: Boolean): Flow<AppResult<Park>> {
-        return repository.requestParkList(position, sortedByTime).transform { result ->
+    override fun get(position: Int): Flow<AppResult<Park>> {
+        return repository.requestParkList(position).transform { result ->
             emit(result)
         }
     }

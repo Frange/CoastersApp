@@ -16,6 +16,6 @@
     <color name="primary_background">#000000</color>
     <color name="secondary_background">#2BA9BC</color>
 
-    <color name="card_background">#3C3C3C</color>
+    <color name="card_background">@color/always_blue</color>
 
 </resources>

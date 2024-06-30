@@ -12,11 +12,10 @@ class RequestParkUseCase @Inject constructor(
 ) : FlowUseCaseWithParams<RequestParkUseCase.Parameters, AppResult<Park>>() {
 
     public override fun execute(parameters: Parameters): Flow<AppResult<Park>> {
-        return parkModel.get(parameters.id, parameters.sortedByTime)
+        return parkModel.get(parameters.id)
     }
 
     class Parameters(
-        val id: Int,
-        val sortedByTime: Boolean
+        val id: Int
     )
 }

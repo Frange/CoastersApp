@@ -1,44 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/item_ride_padding"
-    android:paddingBottom="@dimen/item_ride_padding">
+    android:layout_gravity="center"
+    android:layout_marginStart="@dimen/poi_list_row_horizontal_margin"
+    android:layout_marginTop="@dimen/poi_list_row_vertical_margin"
+    android:layout_marginEnd="@dimen/poi_list_row_horizontal_margin"
+    android:layout_marginBottom="@dimen/poi_list_row_vertical_margin"
+    android:elevation="@dimen/poi_list_row_elevation"
+    app:cardBackgroundColor="@color/card_background_selector"
+    app:cardCornerRadius="8dp">
 
-    <ImageView
-        android:id="@+id/ride_status"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_marginStart="20dp"
-        android:src="@drawable/selector_ride_status"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/park_list_row_height">
 
-    <TextView
-        android:id="@+id/ride_name"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/item_ride_padding_start"
-        android:paddingEnd="@dimen/item_ride_padding"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ride_time"
-        app:layout_constraintStart_toEndOf="@+id/ride_status"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/ride_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/park_list_text_margin_start"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/always_black"
+            android:textSize="@dimen/row_ride_name_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ride_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Parques reunidos" />
 
-    <TextView
-        android:id="@+id/ride_time"
-        android:layout_width="40dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="12dp"
-        android:gravity="end"
-        android:textSize="26sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ride_name"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/ride_time"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/park_list_text_margin_start"
+            android:layout_marginEnd="12dp"
+            android:gravity="center_vertical|end"
+            android:textColor="@color/always_black"
+            android:textSize="@dimen/row_ride_time_size"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ride_time_closed"
+            app:layout_constraintStart_toEndOf="@+id/ride_name"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="100"
+            tools:visibility="visible" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/ride_time_closed"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/park_list_text_margin_start"
+            android:src="@drawable/closed_1_black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ride_time"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -16,13 +16,13 @@ class WidgetSaveModel {
         private const val PARSER_FIELD_ID = "id"
         private const val PARSER_FIELD_NAME = "name"
         private const val PARSER_FIELD_IS_OPEN = "is_open"
+        private const val PARSER_FIELD_IS_FAVOURITE = "is_favourite"
         private const val PARSER_FIELD_WAIT_TIME = "wait_time"
         private const val PARSER_FIELD_LAST_UPDATE = "last_update"
-        private const val PARSER_FIELD_FIRST_ITEM = "firstitem"
 
         fun saveData(context: Context, list: List<Ride>?) {
             val sharedPref = context.getSharedPreferences("SharedPrefs", Context.MODE_PRIVATE)
-            var json = "[]"
+            val json = "[]"
 
             try {
                 val jsonArray = JSONArray(json)
@@ -68,6 +68,7 @@ class WidgetSaveModel {
                             jsonObject.getInt(PARSER_FIELD_ID),
                             jsonObject.getString(PARSER_FIELD_NAME),
                             jsonObject.getBoolean(PARSER_FIELD_IS_OPEN),
+                            jsonObject.getBoolean(PARSER_FIELD_IS_FAVOURITE),
                             jsonObject.getInt(PARSER_FIELD_WAIT_TIME),
                             jsonObject.getString(PARSER_FIELD_LAST_UPDATE)
                         )

@@ -21,7 +21,7 @@ data class AppResult<out T>(
         }
 
         fun <T> exception(e: Throwable): AppResult<T> {
-            return AppResult(Status.EXCEPTION, null, null, null)
+            return AppResult(Status.EXCEPTION, null, e.message, e)
         }
     }
 

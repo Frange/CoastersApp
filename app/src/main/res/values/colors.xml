@@ -12,10 +12,11 @@
     <color name="always_black">#000000</color>
     <color name="always_blue">#2BA9BC</color>
     <color name="always_red">#FF0000</color>
+    <color name="always_gray">#CCCCCC</color>
 
     <color name="primary_background">#FFFFFF</color>
     <color name="secondary_background">#2BA9BC</color>
 
-    <color name="card_background">#3C3C3C</color>
+    <color name="card_background">@color/always_blue</color>
 
 </resources>

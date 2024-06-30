@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.frange.coasters.R
 import com.frange.coasters.databinding.FragmentMainListBinding
 import com.frange.coasters.domain.base.Status
-import com.frange.coasters.domain.model.Company
 import com.frange.coasters.domain.model.ParkInfo
 import com.frange.coasters.domain.model.Ride
 import com.frange.coasters.ui.base.BaseFragment
@@ -55,16 +54,22 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
         initObservers()
         initAdapters()
 
-        mainRequest()
+        requestAllParkInfoList()
 
-        binding?.starButton?.setOnClickListener {
-            mainViewModel.requestPark(currentCoasterPosition, false)
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
+            binding?.swipeRefreshLayout?.isRefreshing = false
+
+            mainViewModel.requestPark(
+                currentCoasterPosition
+            )
         }
-        binding?.timeButton?.setOnClickListener {
-            mainViewModel.requestPark(currentCoasterPosition, true)
+
+        binding?.refreshButton?.setOnClickListener {
+            mainViewModel.requestPark(currentCoasterPosition)
         }
+
         binding?.bRetry?.setOnClickListener {
-            mainRequest()
+            requestAllParkInfoList()
         }
     }
 
@@ -85,60 +90,18 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                 id: Long
             ) {
                 currentCoasterPosition = position
-                mainViewModel.requestPark(position, false)
+                mainViewModel.requestPark(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
-    private fun mainRequest() {
+    private fun requestAllParkInfoList() {
         mainViewModel.requestAllParkInfoList()
     }
 
     private fun initObservers() {
-        mainViewModel.getCompanyList().observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.LOADING -> {
-                    binding?.progressBar?.visibility = VISIBLE
-                    binding?.rvList?.visibility = GONE
-                    binding?.tvMessage?.visibility = GONE
-                    binding?.bRetry?.visibility = GONE
-                }
-                Status.SUCCESS -> {
-                    binding?.progressBar?.visibility = GONE
-                    binding?.rvList?.visibility = VISIBLE
-                    binding?.tvMessage?.visibility = GONE
-                    binding?.bRetry?.visibility = GONE
-
-                }
-                Status.EXCEPTION -> {
-                    binding?.progressBar?.visibility = GONE
-                    binding?.rvList?.visibility = GONE
-                    binding?.tvMessage?.visibility = VISIBLE
-                    binding?.bRetry?.visibility = VISIBLE
-                    binding?.tvMessage?.text =
-                        getString(com.frange.coasters.R.string.exception_poi_call_message)
-                    showToast(
-                        requireContext(),
-                        getString(com.frange.coasters.R.string.error_poi_call_toast)
-                    )
-                }
-                Status.ERROR -> {
-                    binding?.progressBar?.visibility = GONE
-                    binding?.rvList?.visibility = GONE
-                    binding?.tvMessage?.visibility = VISIBLE
-                    binding?.bRetry?.visibility = VISIBLE
-                    binding?.tvMessage?.text =
-                        getString(com.frange.coasters.R.string.error_poi_call_message)
-                    showToast(
-                        requireContext(),
-                        getString(com.frange.coasters.R.string.error_poi_call_toast)
-                    )
-                }
-            }
-        }
-
         mainViewModel.getParkList().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.LOADING -> {
@@ -193,10 +156,6 @@ class MainFragment : BaseFragment<FragmentMainListBinding>(),
                         initCoasterAdapter(it.data.rideList)
                         parkListAdapter =
                             ParkListAdapter(it.data)
-//                            ParkListAdapter(
-//                                this.requireContext(),
-//                                it.data.rideList,
-//                                this)
                         binding?.rvList?.adapter = parkListAdapter
                         binding?.rvList?.visibility = VISIBLE
                         binding?.tvMessage?.visibility = GONE

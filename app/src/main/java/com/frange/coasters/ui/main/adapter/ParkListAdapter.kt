@@ -1,5 +1,6 @@
 package com.frange.coasters.ui.main.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -7,6 +8,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.frange.coasters.R
 import com.frange.coasters.domain.model.Land
@@ -35,6 +37,7 @@ class ParkListAdapter(
         populateItems()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun populateItems() {
         items.clear()
         park.landList?.forEach { land ->
@@ -45,11 +48,15 @@ class ParkListAdapter(
         }
         val rideList = park.rideList
         if (!rideList.isNullOrEmpty()) {
-//            items.add("Sin categoría")
             if (isCategoryExpanded) {
                 items.addAll(rideList)
             }
         }
+        notifyDataSetChanged()
+    }
+
+    fun clearItems() {
+        items.clear()
         notifyDataSetChanged()
     }
 
@@ -116,25 +123,27 @@ class ParkListAdapter(
         }
     }
 
-    class RideViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class RideViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val rideCardView: CardView = itemView.findViewById(R.id.card_view)
         private val rideNameTextView: TextView = itemView.findViewById(R.id.ride_name)
         private val rideTimeTextView: TextView = itemView.findViewById(R.id.ride_time)
-        private val rideStatusImageView: ImageView = itemView.findViewById(R.id.ride_status)
+        private val rideTimeClosedImageView: ImageView =
+            itemView.findViewById(R.id.ride_time_closed)
 
         fun bind(ride: Ride) {
             rideNameTextView.text = ride.name
             rideTimeTextView.text = ride.waitTime.toString()
 
             rideTimeTextView.visibility = if (ride.isOpen) VISIBLE else GONE
+            rideTimeClosedImageView.visibility = if (ride.isOpen) GONE else VISIBLE
 
-            updateStatusCircle(rideStatusImageView, ride.isOpen)
+            updateCardViewBackground(rideCardView, ride.isFavourite)
         }
 
-        private fun updateStatusCircle(imageView: ImageView, isGreen: Boolean) {
-            imageView.isSelected = isGreen
+        private fun updateCardViewBackground(cardView: CardView, isFavorite: Boolean) {
+            cardView.isSelected = isFavorite
         }
     }
-
 
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val headerTextView: TextView = itemView.findViewById(R.id.land_name)

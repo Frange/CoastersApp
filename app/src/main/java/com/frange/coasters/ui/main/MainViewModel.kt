@@ -36,9 +36,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun requestPark(id: Int, sortedByTime: Boolean) {
+    fun requestPark(id: Int) {
         viewModelScope.launch {
-            requestParkUseCase.execute(RequestParkUseCase.Parameters(id, sortedByTime))
+            requestParkUseCase.execute(RequestParkUseCase.Parameters(id))
                 .catch {
                     val exception = it
                     Log.v("Exception", "Exception", exception)
