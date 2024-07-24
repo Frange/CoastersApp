@@ -46,7 +46,7 @@ class ParkListAdapter(
             }
         }
         val rideList = park.rideList
-        if (!rideList.isNullOrEmpty()) {
+        if (!rideList.isNullOrEmpty() && park.landList.isNullOrEmpty()) {
             items.add(Land(0, "Atracciones", arrayListOf()))
             if (isCategoryExpanded) {
                 items.addAll(rideList)

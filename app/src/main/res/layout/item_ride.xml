@@ -26,6 +26,7 @@
             android:layout_marginStart="@dimen/park_list_text_margin_start"
             android:ellipsize="end"
             android:lines="1"
+            android:layout_marginEnd="@dimen/park_list_text_margin_start"
             android:textColor="@color/always_black"
             android:textSize="@dimen/row_ride_name_size"
             app:layout_constraintBottom_toBottomOf="parent"

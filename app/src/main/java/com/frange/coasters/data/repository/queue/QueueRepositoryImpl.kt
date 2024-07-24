@@ -197,6 +197,11 @@ class QueueRepositoryImpl @Inject constructor(
                 "Black Mamba",
                 "Talocan",
                 "Crazy Bats",
+                "Maus au Chocolat",
+                "Chiapas - DIE Wasserbahn",
+                "Mystery Castle",
+                "River Quest",
+                "F.L.Y.",
 
                 //Europa Park
                 "Silver Star",
@@ -209,18 +214,24 @@ class QueueRepositoryImpl @Inject constructor(
                 "Water rollercoaster Poseidon",
                 "Eurosat Coastiality",
                 "Euro-Mir",
+                "Alpine Express 'Enzian'",
+                "Josefina’s Magical Imperial Journey",
+                "Voletarium",
+                "Pegasus",
+                "Pirates in Batavia",
+                "Fjord-Rafting",
 
                 //Movie Park Germany
                 "Star Trek™: Operation Enterprise",
                 "Van Helsing’s Factory",
                 "The Lost Temple",
+                "High Fall Tower",
                 "Excalibur - Secrets of the Dark Forest",
                 "Backyardigans Mission to Mars",
                 "The Bandit",
                 "NYC Transformer",
                 "Crazy Surfer",
                 "Area 51 - Top Secret",
-                "",
             )
 
             val sortedRides = mutableListOf<Ride>()
