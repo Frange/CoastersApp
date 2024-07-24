@@ -68,7 +68,10 @@ class WidgetSaveModel {
                             jsonObject.getInt(PARSER_FIELD_ID),
                             jsonObject.getString(PARSER_FIELD_NAME),
                             jsonObject.getBoolean(PARSER_FIELD_IS_OPEN),
-                            jsonObject.getBoolean(PARSER_FIELD_IS_FAVOURITE),
+                            false,
+//                            jsonObject.getBoolean(
+//                                PARSER_FIELD_IS_FAVOURITE
+//                            ),
                             jsonObject.getInt(PARSER_FIELD_WAIT_TIME),
                             jsonObject.getString(PARSER_FIELD_LAST_UPDATE)
                         )
