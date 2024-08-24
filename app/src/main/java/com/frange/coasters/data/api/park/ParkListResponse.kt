@@ -1,6 +1,5 @@
-package com.frange.coasters.data.api.company.response
+package com.frange.coasters.data.api.park
 
-import com.frange.coasters.data.api.park.ParkResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
