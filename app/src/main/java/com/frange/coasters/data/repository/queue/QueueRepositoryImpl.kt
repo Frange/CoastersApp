@@ -136,7 +136,8 @@ class QueueRepositoryImpl @Inject constructor(
             "Parque Warner Madrid",
             "Parque de Atracciones Madrid",
             "Europa Park",
-            "Phantasialand"
+            "Phantasialand",
+            "Movie Park Germany"
         )
 
         val otherParks = parkInfoList.filter { it.name !in priorityOrder }
