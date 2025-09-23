@@ -1,6 +1,8 @@
 package com.frange.coasters.data.repository.queue
 
 import android.app.Application
+import com.frange.coasters.utils.priorityList
+import com.frange.coasters.utils.priorityOrder
 import com.frange.coasters.data.api.park.toPark
 import com.google.gson.Gson
 import com.frange.coasters.domain.base.AppResult
@@ -132,14 +134,6 @@ class QueueRepositoryImpl @Inject constructor(
     }
 
     private fun sortFavouriteParkInfoList(parkInfoList: List<ParkInfo>): List<ParkInfo> {
-        val priorityOrder = listOf(
-            "Parque Warner Madrid",
-            "Parque de Atracciones Madrid",
-            "Europa Park",
-            "Phantasialand",
-            "Movie Park Germany"
-        )
-
         val otherParks = parkInfoList.filter { it.name !in priorityOrder }
         val sortedPriorityParks = priorityOrder.mapNotNull { name ->
             parkInfoList.find { it.name == name }
@@ -160,81 +154,6 @@ class QueueRepositoryImpl @Inject constructor(
 
     private fun sortFavouriteRides(rideList: List<Ride>?): List<Ride> {
         if (!rideList.isNullOrEmpty()) {
-            val priorityList = listOf(
-                //Parque Warner
-                "Batman Gotham City Escape",
-                "BATMAN: Arkham Asylum",
-                "SUPERMAN™: La Atracción de Acero",
-                "Stunt Fall",
-                "Coaster Express",
-                "La Venganza del ENIGMA",
-                "Hotel Embrujado",
-                "CORRECAMINOS Bip Bip",
-                "TOM y JERRY",
-                "Sillas Voladoras de MR. FREEZE",
-
-                "OSO YOGUI",
-                "Cataratas Salvajes",
-                "Rápidos ACME",
-                "Río Bravo",
-
-
-                //Parque de atracciones de Madrid
-                "Abismo",
-                "Tarántula",
-                "La Máquina",
-                "Tornado",
-                "Lanzadera",
-                "Top Spin",
-                "Vértigo",
-                "Star Flyer",
-                "TNT - Tren de la Mina",
-                "Tifón",
-                "Aserradero",
-                "Los Fiordos",
-
-                //Phantasialand
-                "Taron",
-                "Black Mamba",
-                "Talocan",
-                "Crazy Bats",
-                "Maus au Chocolat",
-                "Chiapas - DIE Wasserbahn",
-                "Mystery Castle",
-                "River Quest",
-                "F.L.Y.",
-
-                //Europa Park
-                "Silver Star",
-                "blue fire Megacoaster",
-                "WODAN - Timburcoaster",
-                "Eurosat - CanCan Coaster",
-                "Silver Star",
-                "Voltron Nevera powered by Rimac",
-                "ARTHUR",
-                "Water rollercoaster Poseidon",
-                "Eurosat Coastiality",
-                "Euro-Mir",
-                "Alpine Express 'Enzian'",
-                "Josefina’s Magical Imperial Journey",
-                "Voletarium",
-                "Pegasus",
-                "Pirates in Batavia",
-                "Fjord-Rafting",
-
-                //Movie Park Germany
-                "Star Trek™: Operation Enterprise",
-                "Van Helsing’s Factory",
-                "The Lost Temple",
-                "High Fall Tower",
-                "Excalibur - Secrets of the Dark Forest",
-                "Backyardigans Mission to Mars",
-                "The Bandit",
-                "NYC Transformer",
-                "Crazy Surfer",
-                "Area 51 - Top Secret",
-            )
-
             val sortedRides = mutableListOf<Ride>()
 
             for (rideName in priorityList) {
