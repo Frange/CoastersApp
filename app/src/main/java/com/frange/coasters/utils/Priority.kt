@@ -8,7 +8,8 @@ val priorityOrder = listOf(
     "Europa Park",
     "Rulantica",
     "Phantasialand",
-    "Movie Park Germany"
+    "Movie Park Germany",
+    "Energylandia"
 )
 
 val priorityList = listOf(

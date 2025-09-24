@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseActivity<V : ViewBinding> : AppCompatActivity() {
@@ -14,6 +15,8 @@ abstract class BaseActivity<V : ViewBinding> : AppCompatActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         val binding = createBinding()
         this.binding = binding
