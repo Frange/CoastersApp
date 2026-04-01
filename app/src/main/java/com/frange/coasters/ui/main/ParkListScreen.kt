@@ -61,7 +61,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
                                     RideCard(ride)
                                 }
 
-                                // 2. Zonas temáticas con sus atracciones
                                 s.selectedPark.landList?.forEach { land ->
                                     stickyHeader {
                                         LandHeader(land.name)

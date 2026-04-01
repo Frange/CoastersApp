@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ParkModel {
 
-    fun get(position: Int): Flow<AppResult<Park>>
+    fun get(id: Int): Flow<AppResult<Park>>
 
 }

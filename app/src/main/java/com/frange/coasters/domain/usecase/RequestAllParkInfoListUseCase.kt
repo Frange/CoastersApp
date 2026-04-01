@@ -15,8 +15,4 @@ class RequestAllParkInfoListUseCase @Inject constructor(
     public override fun execute(): Flow<AppResult<List<ParkInfo>>> {
         return parkInfoModel.get()
     }
-
-    class Parameters(
-        val id: Int
-    )
 }

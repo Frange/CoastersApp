@@ -21,40 +21,30 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-
 class QueueRepositoryImpl @Inject constructor(
-    private val application: Application,
     private val gson: Gson,
     private val service: QueueApiService,
     private val mockService: MockApiService
 ) : QueueRepository {
 
-    private var companyList: List<Company> = arrayListOf()
-    private var parkInfoList: List<ParkInfo> = arrayListOf()
-    private var park: Park = Park(arrayListOf(), arrayListOf())
-    private lateinit var rideList: List<Ride>
-    private lateinit var landList: List<Land>
+    private var companyList: List<Company> = emptyList()
+    private var parkInfoList: List<ParkInfo> = emptyList()
+    private var park: Park = Park(mutableListOf(), mutableListOf())
 
     private val isMock = false
 
     override fun requestAllParkList() = flow {
         emit(AppResult.loading())
-
         try {
-            val response =
-                if (isMock)
-                    mockService.requestMockCompanyList()
-                else
-                    service.requestCompanyList()
+            val response = if (isMock) mockService.requestMockCompanyList() else service.requestCompanyList()
 
             val formattedResponse = gson.fromJson("{list:$response}", ResponseParkList::class.java)
-            companyList = searchAndSortCompany(formattedResponse.list?.map { it.toCompany() }!!)
+            companyList = searchAndSortCompany(formattedResponse.list?.map { it.toCompany() } ?: emptyList())
 
             val allParkInfo = mutableListOf<ParkInfo>()
-
             companyList.forEach { company ->
-                val parkInfoList = searchAndSortPark(company)
-                allParkInfo.addAll(parkInfoList)
+                val parks = searchAndSortPark(company)
+                allParkInfo.addAll(parks)
             }
 
             parkInfoList = sortFavouriteParkInfoList(allParkInfo)
@@ -65,112 +55,82 @@ class QueueRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun requestParkInfoList(position: Int) = flow {
+    override fun requestParkInfoList(id: Int) = flow {
         emit(AppResult.loading())
 
-        parkInfoList = searchAndSortPark(companyList[position])
+        val companyOwner = companyList.find { company ->
+            company.parks?.any { it.id == id } == true
+        }
 
-        emit(AppResult.success(parkInfoList))
+        val list = if (companyOwner != null) {
+            searchAndSortPark(companyOwner)
+        } else {
+            emptyList()
+        }
+
+        emit(AppResult.success(list))
     }.catch {
-        emit(
-            AppResult.exception(it)
-        )
+        emit(AppResult.exception(it))
     }.flowOn(Dispatchers.IO)
 
-    override fun requestParkList(position: Int) = flow {
+    override fun requestParkList(id: Int) = flow {
         emit(AppResult.loading())
 
-        val id = parkInfoList[position].id!!
         val response = service.requestPark(id)
         park = response.toPark()
 
-        val rideList = mutableListOf<Ride>()
-        if (!park.landList.isNullOrEmpty()) {
-            park.landList!!.forEach {
-                if (!it.rideList.isNullOrEmpty()) {
-                    rideList.addAll(it.rideList)
-                }
-            }
+        // 1. Extraer todas las atracciones (de tierras y de la lista principal)
+        val allRides = mutableListOf<Ride>()
+        park.landList?.forEach { land ->
+            land.rideList?.let { allRides.addAll(it) }
         }
-        park.rideList?.let { rideList.addAll(it) }
+        park.rideList?.let { allRides.addAll(it) }
 
-        val sortedList = sortFavouriteRides(rideList)
-
+        // 2. Aplicar orden de FAVORITOS (priorityList)
+        val sortedList = sortFavouriteRides(allRides)
         park.rideList = sortedList
 
         emit(AppResult.success(park))
     }.catch {
-        emit(
-            AppResult.exception(it)
-        )
+        emit(AppResult.exception(it))
     }.flowOn(Dispatchers.IO)
 
     override fun requestRideList() = flow {
         emit(AppResult.loading())
-
-        rideList = park.rideList!!
-
-        emit(AppResult.success(rideList))
+        emit(AppResult.success(park.rideList ?: emptyList()))
     }
 
-    override fun getCurrentCompanyList(): List<Company> {
-        return companyList
+    private fun searchAndSortCompany(list: List<Company>): List<Company> =
+        list.sortedBy { it.name }
+
+    private fun sortFavouriteParkInfoList(list: List<ParkInfo>): List<ParkInfo> {
+        val (priority, others) = list.partition { it.name in priorityOrder }
+        val sortedPriority = priorityOrder.mapNotNull { name -> priority.find { it.name == name } }
+        return sortedPriority + others.sortedBy { it.name }
     }
 
-    override fun getCurrentParkList(): List<ParkInfo> {
-        return parkInfoList
-    }
-
-    override fun getCurrentCoasterList(): Park {
-        return park
-    }
-
-    private fun searchAndSortCompany(list: List<Company>): List<Company> {
-        return if (list.isNotEmpty()) {
-            list.sortedBy { it.name }
-        } else {
-            list
-        }
-    }
-
-    private fun sortFavouriteParkInfoList(parkInfoList: List<ParkInfo>): List<ParkInfo> {
-        val otherParks = parkInfoList.filter { it.name !in priorityOrder }
-        val sortedPriorityParks = priorityOrder.mapNotNull { name ->
-            parkInfoList.find { it.name == name }
-        }
-        return sortedPriorityParks + otherParks.sortedBy { it.name }
-    }
-
-    private fun searchAndSortPark(
-        company: Company
-    ): List<ParkInfo> {
-        val list = company.parks
-        return if (!list.isNullOrEmpty()) {
-            list.sortedBy { it.name }
-        } else {
-            arrayListOf()
-        }
-    }
+    private fun searchAndSortPark(company: Company): List<ParkInfo> =
+        company.parks?.sortedBy { it.name } ?: emptyList()
 
     private fun sortFavouriteRides(rideList: List<Ride>?): List<Ride> {
-        if (!rideList.isNullOrEmpty()) {
-            val sortedRides = mutableListOf<Ride>()
+        if (rideList.isNullOrEmpty()) return emptyList()
 
-            for (rideName in priorityList) {
-                val ride = rideList.find { it.name == rideName }
-                ride?.let {
-                    it.isFavourite = true
-                    sortedRides.add(it)
-                }
+        val sortedRides = mutableListOf<Ride>()
+
+        priorityList.forEach { favName ->
+            rideList.find { it.name!!.uppercase() == favName.uppercase() }?.let {
+                it.isFavourite = true
+                sortedRides.add(it)
             }
-
-            val ridesWithoutPriority = rideList.filter { it.name !in priorityList }
-            sortedRides.addAll(ridesWithoutPriority)
-
-            return sortedRides
-        } else {
-            return arrayListOf()
         }
+
+        val rest = rideList.filter { it.name !in priorityList }
+        sortedRides.addAll(rest)
+
+        return sortedRides
     }
 
+    override fun getCurrentCompanyList() = companyList
+    override fun getCurrentParkList() = parkInfoList
+    override fun getCurrentCoasterList() = park
 }

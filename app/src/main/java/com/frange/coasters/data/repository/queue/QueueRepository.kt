@@ -11,12 +11,13 @@ interface QueueRepository {
 
     fun requestAllParkList(): Flow<AppResult<List<ParkInfo>>>
 
-    fun requestParkInfoList(position: Int): Flow<AppResult<List<ParkInfo>>>
-    fun requestParkList(position: Int): Flow<AppResult<Park>>
+    fun requestParkInfoList(id: Int): Flow<AppResult<List<ParkInfo>>>
+
+    fun requestParkList(id: Int): Flow<AppResult<Park>>
+
     fun requestRideList(): Flow<AppResult<List<Ride>>>
 
     fun getCurrentCompanyList(): List<Company>
     fun getCurrentCoasterList(): Park
     fun getCurrentParkList(): List<ParkInfo>
-
 }
