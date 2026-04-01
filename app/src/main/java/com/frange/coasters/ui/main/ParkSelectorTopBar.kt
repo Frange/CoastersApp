@@ -26,17 +26,21 @@ fun ParkSelectorTopBar(
     var expanded by remember { mutableStateOf(false) }
     val selectedName = parks.find { it.id == selectedParkId }?.name ?: "Seleccionar Parque"
 
+    val blueColor = Color(0xFF00BCD4)
+    val dropDownColor = Color(0xFF1B89AC)
+    val backgroundColor = Color(0xFF000000)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF212121)) // Color oscuro del selector
+            .background(backgroundColor)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Default.SubdirectoryArrowRight,
             contentDescription = null,
-            tint = Color(0xFF00BCD4)
+            tint = blueColor
         )
 
         Text(
@@ -49,21 +53,20 @@ fun ParkSelectorTopBar(
             fontSize = 16.sp
         )
 
-        // BOTÓN DE REFRESCO MANUAL (El icono del reloj)
         IconButton(onClick = onRefreshClick) {
             Icon(
-                // Reemplaza con tu R.drawable.ic_clock si lo tienes
                 imageVector = Icons.Default.History,
                 contentDescription = "Refrescar",
-                tint = Color(0xFF00BCD4)
+                tint = blueColor
             )
         }
 
-        // Menú desplegable
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(Color(0xFF00BCD4))
+            modifier = Modifier.background(
+                dropDownColor
+            )
         ) {
             parks.forEach { park ->
                 DropdownMenuItem(

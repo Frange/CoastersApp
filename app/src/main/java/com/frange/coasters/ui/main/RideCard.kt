@@ -21,7 +21,6 @@ import com.frange.coasters.domain.model.Ride
 fun RideCard(ride: Ride) {
     val backgroundColor = if (ride.isFavourite) Color(0xFF006064) else Color(0xFFE0E0E0)
     val contentColor = if (ride.isFavourite) Color.White else Color.Black
-    val iconTint = if (ride.isFavourite) Color(0xFF00BCD4) else Color(0xFF757575)
 
     Surface(
         modifier = Modifier
@@ -46,7 +45,7 @@ fun RideCard(ride: Ride) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = null,
-                        tint = Color(0xFF00BCD4), // Cian brillante para resaltar sobre el azul oscuro
+                        tint = Color(0xFF00BCD4),
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(Modifier.width(8.dp))
@@ -59,19 +58,18 @@ fun RideCard(ride: Ride) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     ),
-                    maxLines = 1 // Evitamos que nombres largos rompan el diseño
+                    maxLines = 1
                 )
             }
 
-            if (ride.waitTime >= 5 ) {
+            if (ride.waitTime >= 5) {
                 WaitTimeBadge(ride.waitTime)
             } else {
-                // Icono de cerrado (usando el color de contenido adaptado)
                 Icon(
                     painter = painterResource(id = R.drawable.closed_jm),
                     contentDescription = "Closed",
                     tint = contentColor.copy(alpha = 0.7f),
-                    modifier = Modifier.size(32.dp) // Reducido un poco para que no sature la fila
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
@@ -93,8 +91,14 @@ fun WaitTimeBadge(minutes: Int) {
         Text(
             text = "$minutes MIN",
             color = Color.White,
-            style = TextStyle(fontWeight = FontWeight.Black, fontSize = 13.sp),
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+            style = TextStyle(
+                fontWeight = FontWeight.Black,
+                fontSize = 13.sp
+            ),
+            modifier = Modifier.padding(
+                horizontal = 8.dp,
+                vertical = 2.dp
+            )
         )
     }
 }

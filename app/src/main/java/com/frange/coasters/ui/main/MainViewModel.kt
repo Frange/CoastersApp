@@ -68,7 +68,6 @@ class MainViewModel @Inject constructor(
 
     fun requestPark(parkId: Int) {
         val currentState = _uiState.value as? ParkUiState.Success ?: return
-        // Limpiamos el parque anterior y ponemos cargando
         _uiState.value = currentState.copy(selectedPark = null, isRefreshing = true)
         launchParkRequest(parkId)
     }

@@ -1,7 +1,5 @@
 package com.frange.coasters.ui.main
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,17 +14,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frange.coasters.R // Asegúrate de que apunte a tus recursos
+import com.frange.coasters.R
 
-
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParkListScreen(viewModel: MainViewModel) {
     val state by viewModel.uiState.collectAsState()
-    val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
     var currentParkId by remember { mutableStateOf<Int?>(null) }
 
-    // Sincronizar el ID del primer parque cargado
     LaunchedEffect(state) {
         if (state is ParkUiState.Success && currentParkId == null) {
             currentParkId = (state as ParkUiState.Success).availableParks.firstOrNull()?.id
@@ -36,36 +31,37 @@ fun ParkListScreen(viewModel: MainViewModel) {
     Scaffold(
         containerColor = Color.Black,
         topBar = {
-            Column {
+            // Cabecera con tu color primary #2BA9BC
+            Column(modifier = Modifier.background(Color(0xFF2BA9BC))) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFF00BCD4))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.roller_coster_min_blue),
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(60.dp)
+                        modifier = Modifier.size(45.dp)
                     )
-                    Spacer(modifier = Modifier.width(18.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            "Coasters app",
+                            text = "Coasters app",
                             color = Color.White,
-                            fontSize = 20.sp,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Where magic happens",
-                            color = Color.White.copy(alpha = 0.8f),
+                            text = "Where magic happens",
+                            color = Color.White.copy(alpha = 0.9f),
                             fontSize = 14.sp
                         )
                     }
                 }
 
+                // Selector de Parque (integrado en el mismo color azul)
                 (state as? ParkUiState.Success)?.let { successState ->
                     ParkSelectorTopBar(
                         parks = successState.availableParks,
@@ -88,41 +84,51 @@ fun ParkListScreen(viewModel: MainViewModel) {
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { currentParkId?.let { viewModel.requestPark(it) } },
-            modifier = Modifier.fillMaxSize().padding(paddingValues).background(Color.Black)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(Color.Black)
         ) {
             when (val s = state) {
-                is ParkUiState.Loading -> CircularProgressIndicator(
-                    color = Color(0xFF00BCD4),
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                is ParkUiState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color(0xFF2BA9BC))
+                    }
+                }
 
                 is ParkUiState.Success -> {
-                    if (s.selectedPark != null) {
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            s.selectedPark.rideList?.let { rides ->
-                                items(rides) { ride -> RideCard(ride) }
-                            }
-                            s.selectedPark.landList?.forEach { land ->
-                                val isExpanded = expandedStates[land.name] ?: true
-                                stickyHeader {
-                                    LandHeader(
-                                        name = land.name,
-                                        isExpanded = isExpanded,
-                                        onToggle = { expandedStates[land.name] = !isExpanded }
-                                    )
-                                }
-                                if (isExpanded) {
-                                    items(land.rideList ?: emptyList()) { ride -> RideCard(ride) }
-                                }
+                    val rides = s.selectedPark?.rideList
+
+                    if (!rides.isNullOrEmpty()) {
+                        // LISTADO PLANO (Favoritos -> Tiempos -> Cerrados)
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)
+                        ) {
+                            items(rides) { ride ->
+                                RideCard(ride)
                             }
                         }
-                    } else if (!isRefreshing) {
-                        ErrorOrEmptyView("No se encontraron datos", onRetry = { viewModel.requestAllParkInfoList() })
+                    } else {
+                        // Lógica para evitar el parpadeo del mensaje "No hay datos"
+                        if (s.isRefreshing || s.selectedPark == null) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = Color(0xFF2BA9BC))
+                            }
+                        } else {
+                            ErrorOrEmptyView(
+                                message = "No se encontraron datos",
+                                onRetry = { viewModel.requestAllParkInfoList() }
+                            )
+                        }
                     }
                 }
 
                 is ParkUiState.Error -> {
-                    ErrorOrEmptyView(s.message, onRetry = { viewModel.requestAllParkInfoList() })
+                    ErrorOrEmptyView(
+                        message = s.message,
+                        onRetry = { viewModel.requestAllParkInfoList() }
+                    )
                 }
             }
         }
@@ -136,13 +142,18 @@ fun ErrorOrEmptyView(message: String, onRetry: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = message, color = Color.White.copy(alpha = 0.6f))
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = message,
+            color = Color.White.copy(alpha = 0.6f),
+            fontSize = 16.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00BCD4))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2BA9BC)),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text("Reintentar", color = Color.Black)
+            Text("Reintentar", color = Color.Black, fontWeight = FontWeight.Bold)
         }
     }
 }
