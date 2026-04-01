@@ -27,6 +27,7 @@ class MainViewModel @Inject constructor(
         requestAllParkInfoList()
     }
 
+    // Public para poder reintentar desde la UI si falla al inicio
     fun requestAllParkInfoList() {
         viewModelScope.launch {
             _uiState.value = ParkUiState.Loading
@@ -34,32 +35,30 @@ class MainViewModel @Inject constructor(
             requestCompanyListUseCase.execute()
                 .catch { e ->
                     Log.e("MY_TAG", "Error en UseCase", e)
-                    _uiState.value = ParkUiState.Error(e.message ?: "Error")
+                    _uiState.value = ParkUiState.Error(e.message ?: "Error de conexión")
                 }
                 .collect { result ->
                     val rawData = result.data as? List<Any?> ?: emptyList()
-
-                    val sortedParks = mutableListOf<ParkInfo>()
+                    val allParks = mutableListOf<ParkInfo>()
 
                     rawData.forEach { item ->
                         when (item) {
-                            is Company -> {
-                                item.parks?.let { sortedParks.addAll(it) }
-                            }
-
-                            is ParkInfo -> {
-                                sortedParks.add(item)
-                            }
+                            is Company -> item.parks?.let { allParks.addAll(it) }
+                            is ParkInfo -> allParks.add(item)
                         }
                     }
 
-                    if (sortedParks.isNotEmpty()) {
+                    // Filtrado de duplicados y ordenación
+                    val cleanParks = allParks
+                        .filter { it.id != null }
+                        .distinctBy { it.id }
+
+                    if (cleanParks.isNotEmpty()) {
                         _uiState.value = ParkUiState.Success(
-                            availableParks = sortedParks,
+                            availableParks = cleanParks,
                             isRefreshing = false
                         )
-
-                        sortedParks.firstOrNull()?.id?.let { requestPark(it) }
+                        cleanParks.first().id?.let { launchParkRequest(it) }
                     } else {
                         _uiState.value = ParkUiState.Error("No se encontraron parques")
                     }
@@ -69,25 +68,15 @@ class MainViewModel @Inject constructor(
 
     fun requestPark(parkId: Int) {
         val currentState = _uiState.value as? ParkUiState.Success ?: return
-        val selectedParkInfo = currentState.availableParks.find { it.id == parkId }
-
-        if (selectedParkInfo != null) {
-            launchParkRequest(parkId)
-        }
+        // Limpiamos el parque anterior y ponemos cargando
+        _uiState.value = currentState.copy(selectedPark = null, isRefreshing = true)
+        launchParkRequest(parkId)
     }
 
     private fun launchParkRequest(id: Int) {
-        val currentState = _uiState.value
-        if (currentState is ParkUiState.Success) {
-            _uiState.value = currentState.copy(isRefreshing = true)
-        }
-
         viewModelScope.launch {
-            Log.d("MY_TAG", "----> Pidiendo detalle del ID: $id")
-
             requestParkUseCase.execute(RequestParkUseCase.Parameters(id))
                 .catch { e ->
-                    Log.e("MY_TAG", "Error al cargar parque", e)
                     (uiState.value as? ParkUiState.Success)?.let {
                         _uiState.value = it.copy(isRefreshing = false)
                     }
@@ -96,7 +85,7 @@ class MainViewModel @Inject constructor(
                     val lastState = _uiState.value as? ParkUiState.Success
                     if (lastState != null) {
                         _uiState.value = lastState.copy(
-                            selectedPark = result.data, // Aquí va el objeto Park
+                            selectedPark = result.data,
                             isRefreshing = false
                         )
                     }

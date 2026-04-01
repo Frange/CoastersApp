@@ -1,47 +1,74 @@
 package com.frange.coasters.ui.main
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.SubdirectoryArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.frange.coasters.domain.model.ParkInfo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParkSelectorTopBar(
     parks: List<ParkInfo>,
-    onParkSelected: (ParkInfo) -> Unit
+    selectedParkId: Int?,
+    isRefreshing: Boolean,
+    onParkSelected: (ParkInfo) -> Unit,
+    onRefreshClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedName by remember { mutableStateOf(parks.firstOrNull()?.name ?: "Seleccionar Parque") }
+    val selectedName = parks.find { it.id == selectedParkId }?.name ?: "Seleccionar Parque"
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .background(Color(0xFF212121)) // Color oscuro del selector
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        OutlinedTextField(
-            value = selectedName,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Parque") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor().fillMaxWidth()
+        Icon(
+            imageVector = Icons.Default.SubdirectoryArrowRight,
+            contentDescription = null,
+            tint = Color(0xFF00BCD4)
         )
 
-        ExposedDropdownMenu(
+        Text(
+            text = selectedName,
+            color = Color.White,
+            modifier = Modifier
+                .weight(1f)
+                .clickable { expanded = true }
+                .padding(start = 12.dp),
+            fontSize = 16.sp
+        )
+
+        // BOTÓN DE REFRESCO MANUAL (El icono del reloj)
+        IconButton(onClick = onRefreshClick) {
+            Icon(
+                // Reemplaza con tu R.drawable.ic_clock si lo tienes
+                imageVector = Icons.Default.History,
+                contentDescription = "Refrescar",
+                tint = Color(0xFF00BCD4)
+            )
+        }
+
+        // Menú desplegable
+        DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(Color(0xFF00BCD4))
         ) {
             parks.forEach { park ->
                 DropdownMenuItem(
-                    text = { Text(park.name) },
+                    text = { Text(park.name, color = Color.White) },
                     onClick = {
-                        selectedName = park.name
                         expanded = false
                         onParkSelected(park)
                     }

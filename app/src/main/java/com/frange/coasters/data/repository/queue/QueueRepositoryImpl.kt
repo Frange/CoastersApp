@@ -36,10 +36,12 @@ class QueueRepositoryImpl @Inject constructor(
     override fun requestAllParkList() = flow {
         emit(AppResult.loading())
         try {
-            val response = if (isMock) mockService.requestMockCompanyList() else service.requestCompanyList()
+            val response =
+                if (isMock) mockService.requestMockCompanyList() else service.requestCompanyList()
 
             val formattedResponse = gson.fromJson("{list:$response}", ResponseParkList::class.java)
-            companyList = searchAndSortCompany(formattedResponse.list?.map { it.toCompany() } ?: emptyList())
+            companyList =
+                searchAndSortCompany(formattedResponse.list?.map { it.toCompany() } ?: emptyList())
 
             val allParkInfo = mutableListOf<ParkInfo>()
             companyList.forEach { company ->
@@ -115,19 +117,28 @@ class QueueRepositoryImpl @Inject constructor(
     private fun sortFavouriteRides(rideList: List<Ride>?): List<Ride> {
         if (rideList.isNullOrEmpty()) return emptyList()
 
-        val sortedRides = mutableListOf<Ride>()
-
-        priorityList.forEach { favName ->
-            rideList.find { it.name!!.uppercase() == favName.uppercase() }?.let {
-                it.isFavourite = true
-                sortedRides.add(it)
+        val (favs, others) = rideList.partition { ride ->
+            if (ride.waitTime < 5) {
+                ride.isOpen = false
             }
+            priorityList.any { favName -> ride.name?.uppercase() == favName.uppercase() }
         }
 
-        val rest = rideList.filter { it.name !in priorityList }
-        sortedRides.addAll(rest)
+        val sortedFavs = favs.onEach { it.isFavourite = true }
+            .sortedWith(compareBy<Ride> {
+                // Criterio 1: Las cerradas al final del bloque (true > false, por eso usamos isClosed)
+                // Si 'waitTime' o 'status' indican cerrado, lo mandamos al final.
+                it.waitTime == -1 || !it.isOpen
+            }.thenBy {
+                // Criterio 2: Tiempo de espera de menor a mayor
+                it.waitTime
+            })
 
-        return sortedRides
+        // 3. Ordenar el bloque de NO FAVORITOS por nombre
+        val sortedOthers = others.sortedBy { it.name?.lowercase() }
+
+        // 4. Combinar ambos bloques
+        return sortedFavs + sortedOthers
     }
 
     override fun getCurrentCompanyList() = companyList

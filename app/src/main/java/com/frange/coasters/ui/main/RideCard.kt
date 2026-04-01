@@ -1,72 +1,78 @@
 package com.frange.coasters.ui.main
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.frange.coasters.R
 import com.frange.coasters.domain.model.Ride
 
 @Composable
 fun RideCard(ride: Ride) {
-    Card(
+    val backgroundColor = if (ride.isFavourite) Color(0xFF006064) else Color(0xFFE0E0E0)
+    val contentColor = if (ride.isFavourite) Color.White else Color.Black
+    val iconTint = if (ride.isFavourite) Color(0xFF00BCD4) else Color(0xFF757575)
+
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (ride.isFavourite)
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            else MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .height(58.dp)
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        shape = RoundedCornerShape(4.dp),
+        color = backgroundColor
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = ride.name!!,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                if (ride.isFavourite) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = Color(0xFF00BCD4), // Cian brillante para resaltar sobre el azul oscuro
+                        modifier = Modifier.size(18.dp)
                     )
-                    if (ride.isFavourite) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = null,
-                            tint = Color.Red,
-                            modifier = Modifier.padding(start = 8.dp).size(16.dp)
-                        )
-                    }
+                    Spacer(Modifier.width(8.dp))
                 }
+
+                Text(
+                    text = ride.name?.uppercase() ?: "",
+                    style = TextStyle(
+                        color = contentColor,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    ),
+                    maxLines = 1 // Evitamos que nombres largos rompan el diseño
+                )
             }
 
-            if (ride.isOpen) {
-                WaitTimeBadge(ride.waitTime!!)
+            if (ride.waitTime >= 5 ) {
+                WaitTimeBadge(ride.waitTime)
             } else {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = " CERRADA",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+                // Icono de cerrado (usando el color de contenido adaptado)
+                Icon(
+                    painter = painterResource(id = R.drawable.closed_jm),
+                    contentDescription = "Closed",
+                    tint = contentColor.copy(alpha = 0.7f),
+                    modifier = Modifier.size(32.dp) // Reducido un poco para que no sature la fila
+                )
             }
         }
     }
@@ -75,21 +81,20 @@ fun RideCard(ride: Ride) {
 @Composable
 fun WaitTimeBadge(minutes: Int) {
     val color = when {
-        minutes < 15 -> Color(0xFF4CAF50) // Verde
-        minutes < 45 -> Color(0xFFFFA000) // Naranja
-        else -> Color(0xFFD32F2F)         // Rojo
+        minutes < 15 -> Color(0xFF2E7D32)
+        minutes < 45 -> Color(0xFFEF6C00)
+        else -> Color(0xFFC62828)
     }
 
     Surface(
         color = color,
-        shape = MaterialTheme.shapes.small
+        shape = RoundedCornerShape(4.dp)
     ) {
         Text(
-            text = "$minutes min",
+            text = "$minutes MIN",
             color = Color.White,
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            style = TextStyle(fontWeight = FontWeight.Black, fontSize = 13.sp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
         )
     }
 }
