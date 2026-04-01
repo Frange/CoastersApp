@@ -8,16 +8,20 @@ plugins {
 
 android {
     namespace 'com.frange.coasters'
-    compileSdk 33
+    compileSdk 35 // Actualizado a 34 para mejor compatibilidad con Compose
 
     defaultConfig {
         applicationId "com.frange.coasters"
         minSdk 24
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
     buildTypes {
@@ -28,67 +32,75 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     buildFeatures {
-        dataBinding true
+        // Mantenemos viewBinding por si lo usas en otras pantallas,
+        // pero activamos COMPOSE que es lo importante.
         viewBinding true
+        compose true
     }
 
-    kapt {
-        correctErrorTypes = true
+    composeOptions {
+        // Esta versión debe ser compatible con tu versión de Kotlin
+        kotlinCompilerExtensionVersion '1.5.4'
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 }
 
 dependencies {
+    // --- JETPACK COMPOSE CORE (Bajamos el BOM a una versión estable de 2025) ---
+    def composeBom = platform('androidx.compose:compose-bom:2025.02.00')
+    implementation composeBom
+    androidTestImplementation composeBom
 
-    // Local libs
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
 
-    // Android X and Kotlin
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.activity:activity-ktx:1.6.1'
-    implementation 'androidx.fragment:fragment-ktx:1.5.5'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.annotation:annotation:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
+    // Versiones ajustadas para no pedir SDK 36 ni AGP 8.9
+    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
+    implementation 'androidx.compose.runtime:runtime-livedata'
 
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    // --- ANDROID X & KOTLIN CORE (Bajamos de 1.18/1.13 a estas) ---
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.compose.material:material-icons-extended'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    // --- HILT (Sincronizado con el plugin 2.54) ---
+    implementation 'com.google.dagger:hilt-android:2.54'
+    kapt 'com.google.dagger:hilt-compiler:2.54'
+    implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
 
-    implementation 'com.google.android.material:material:1.8.0'
-
-    // Injection
-    implementation 'com.google.dagger:hilt-android:2.44'
-    kapt 'com.google.dagger:hilt-compiler:2.44'
-
-    // Network
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+    // --- NETWORK ---
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.15.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // <--- Cambia esto
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 
-    // Moshi
-    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.14.0'
-    implementation 'com.squareup.moshi:moshi:1.14.0'
-    implementation 'com.squareup.moshi:moshi-kotlin:1.14.0'
-    implementation 'com.squareup.moshi:moshi-adapters:1.14.0'
+    // --- COROUTINES ---
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
 
-    // Images
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }

@@ -1,6 +1,5 @@
 package com.frange.coasters.di
 
-import android.app.Application
 import android.content.Context
 import com.google.gson.Gson
 import com.frange.coasters.data.api.service.InfoCaptainApiService
