@@ -27,7 +27,6 @@ class MainViewModel @Inject constructor(
         requestAllParkInfoList()
     }
 
-    // Public para poder reintentar desde la UI si falla al inicio
     fun requestAllParkInfoList() {
         viewModelScope.launch {
             _uiState.value = ParkUiState.Loading
@@ -48,15 +47,16 @@ class MainViewModel @Inject constructor(
                         }
                     }
 
-                    // Filtrado de duplicados y ordenación
                     val cleanParks = allParks
                         .filter { it.id != null }
                         .distinctBy { it.id }
 
                     if (cleanParks.isNotEmpty()) {
+                        // Marcamos isRefreshing = true porque inmediatamente cargamos el primer parque
                         _uiState.value = ParkUiState.Success(
                             availableParks = cleanParks,
-                            isRefreshing = false
+                            selectedPark = null,
+                            isRefreshing = true
                         )
                         cleanParks.first().id?.let { launchParkRequest(it) }
                     } else {
@@ -68,7 +68,8 @@ class MainViewModel @Inject constructor(
 
     fun requestPark(parkId: Int) {
         val currentState = _uiState.value as? ParkUiState.Success ?: return
-        _uiState.value = currentState.copy(selectedPark = null, isRefreshing = true)
+        // No borramos selectedPark aquí para evitar salto blanco, solo activamos refresco
+        _uiState.value = currentState.copy(isRefreshing = true)
         launchParkRequest(parkId)
     }
 
@@ -76,8 +77,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             requestParkUseCase.execute(RequestParkUseCase.Parameters(id))
                 .catch { e ->
-                    (uiState.value as? ParkUiState.Success)?.let {
-                        _uiState.value = it.copy(isRefreshing = false)
+                    val lastState = _uiState.value as? ParkUiState.Success
+                    if (lastState != null) {
+                        _uiState.value = lastState.copy(isRefreshing = false)
+                    } else {
+                        _uiState.value = ParkUiState.Error(e.message ?: "Error al cargar parque")
                     }
                 }
                 .collect { result ->
@@ -85,7 +89,7 @@ class MainViewModel @Inject constructor(
                     if (lastState != null) {
                         _uiState.value = lastState.copy(
                             selectedPark = result.data,
-                            isRefreshing = false
+                            isRefreshing = false // Cerramos el círculo del refresh
                         )
                     }
                 }

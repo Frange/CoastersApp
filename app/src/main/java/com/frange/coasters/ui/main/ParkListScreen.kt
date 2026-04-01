@@ -31,7 +31,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
     Scaffold(
         containerColor = Color.Black,
         topBar = {
-            // Cabecera con tu color primary #2BA9BC
             Column(modifier = Modifier.background(Color(0xFF2BA9BC))) {
                 Row(
                     modifier = Modifier
@@ -61,15 +60,16 @@ fun ParkListScreen(viewModel: MainViewModel) {
                     }
                 }
 
-                // Selector de Parque (integrado en el mismo color azul)
                 (state as? ParkUiState.Success)?.let { successState ->
                     ParkSelectorTopBar(
                         parks = successState.availableParks,
                         selectedParkId = currentParkId,
                         isRefreshing = successState.isRefreshing,
                         onParkSelected = { parkInfo ->
-                            currentParkId = parkInfo.id
-                            parkInfo.id?.let { viewModel.requestPark(it) }
+                            if (currentParkId != parkInfo.id) {
+                                currentParkId = parkInfo.id
+                                parkInfo.id?.let { viewModel.requestPark(it) }
+                            }
                         },
                         onRefreshClick = {
                             currentParkId?.let { viewModel.requestPark(it) }
@@ -79,6 +79,7 @@ fun ParkListScreen(viewModel: MainViewModel) {
             }
         }
     ) { paddingValues ->
+        // Sincronización directa con el estado del ViewModel
         val isRefreshing = (state as? ParkUiState.Success)?.isRefreshing ?: false
 
         PullToRefreshBox(
@@ -100,7 +101,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
                     val rides = s.selectedPark?.rideList
 
                     if (!rides.isNullOrEmpty()) {
-                        // LISTADO PLANO (Favoritos -> Tiempos -> Cerrados)
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)
@@ -110,7 +110,7 @@ fun ParkListScreen(viewModel: MainViewModel) {
                             }
                         }
                     } else {
-                        // Lógica para evitar el parpadeo del mensaje "No hay datos"
+                        // Mientras se carga el primer parque o se refresca, mostramos el Spinner
                         if (s.isRefreshing || s.selectedPark == null) {
                             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(color = Color(0xFF2BA9BC))
