@@ -25,14 +25,14 @@ fun RideCard(ride: Ride) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(58.dp)
+            .height(54.dp)
             .padding(horizontal = 12.dp, vertical = 4.dp),
         shape = RoundedCornerShape(4.dp),
         color = backgroundColor
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .padding(horizontal = 16.dp, vertical = 2.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween

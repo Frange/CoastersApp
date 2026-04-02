@@ -31,7 +31,13 @@ fun ParkListScreen(viewModel: MainViewModel) {
     Scaffold(
         containerColor = Color.Black,
         topBar = {
-            Column(modifier = Modifier.background(Color(0xFF2BA9BC))) {
+            Column(
+                modifier = Modifier
+                    .background(
+                        Color(0xFF2BA9BC)
+                    )
+                    .statusBarsPadding()
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,7 +108,7 @@ fun ParkListScreen(viewModel: MainViewModel) {
                     if (!rides.isNullOrEmpty()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)
+                            contentPadding = PaddingValues(top = 0.dp, bottom = 16.dp)
                         ) {
                             items(rides) { ride ->
                                 RideCard(ride)

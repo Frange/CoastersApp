@@ -15,15 +15,15 @@ val priorityOrder = listOf(
 val priorityList = listOf(
     //Parque Warner
     "Batman Gotham City Escape",
-    "BATMAN: Arkham Asylum",
-    "SUPERMAN™: La Atracción de Acero",
+    "Shadows of Arkham",
+    "SUPERMAN La Atracción de Acero",
     "Stunt Fall",
     "Coaster Express",
     "La Venganza del ENIGMA",
     "Hotel Embrujado",
     "CORRECAMINOS Bip Bip",
-    "TOM y JERRY",
-    "Sillas Voladoras de MR. FREEZE",
+    "TOM & JERRY PICNIC EN EL PARQUE",
+    "MR. FREEZE FÁBRICA DE HIELO",
 
     "OSO YOGUI",
     "Cataratas Salvajes",
@@ -104,4 +104,30 @@ val priorityList = listOf(
     "NYC Transformer",
     "Crazy Surfer",
     "Area 51 - Top Secret",
+
+    //Energylandia
+    "Zadra Rc",
+    "Hyperion Rc",
+    "Abyssus",
+    "Moya Formula Rc",
+    "Mayan Rc",
+    "Speed Rc",
+    "Rmf Dragon Rc",
+    "Tidal Wave Twister",
+    "Boomerang ",
+    "Anaconda",
+    "Ekipa Light Explorers",
+    "Frida Rc",
+
+    //Rulantica
+    "Vikingløp",
+    "Vinter Rytt",
+    "Svalgur Rytt",
+    "Vildstrøm",
+    "Stormvind",
+    "Dugdrob",
+    "Vildfål",
+    "Tønnevirvel",
+    "Isbrekker",
+    "Snorri's Saga",
 )
