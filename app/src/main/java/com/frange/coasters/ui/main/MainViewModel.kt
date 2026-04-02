@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val requestCompanyListUseCase: RequestAllParkInfoListUseCase,
@@ -22,24 +23,26 @@ class MainViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<ParkUiState>(ParkUiState.Loading)
     val uiState: StateFlow<ParkUiState> = _uiState.asStateFlow()
+    var isFirstTime = true
+
+    private var fetchJob: kotlinx.coroutines.Job? = null
 
     init {
         requestAllParkInfoList()
     }
 
     fun requestAllParkInfoList() {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             _uiState.value = ParkUiState.Loading
 
             requestCompanyListUseCase.execute()
                 .catch { e ->
-                    Log.e("MY_TAG", "Error en UseCase", e)
                     _uiState.value = ParkUiState.Error(e.message ?: "Error de conexión")
                 }
                 .collect { result ->
                     val rawData = result.data as? List<Any?> ?: emptyList()
                     val allParks = mutableListOf<ParkInfo>()
-
                     rawData.forEach { item ->
                         when (item) {
                             is Company -> item.parks?.let { allParks.addAll(it) }
@@ -47,18 +50,18 @@ class MainViewModel @Inject constructor(
                         }
                     }
 
-                    val cleanParks = allParks
-                        .filter { it.id != null }
-                        .distinctBy { it.id }
+                    val cleanParks = allParks.filter { it.id != null }.distinctBy { it.id }
 
                     if (cleanParks.isNotEmpty()) {
-                        // Marcamos isRefreshing = true porque inmediatamente cargamos el primer parque
                         _uiState.value = ParkUiState.Success(
                             availableParks = cleanParks,
                             selectedPark = null,
                             isRefreshing = true
                         )
                         cleanParks.first().id?.let { launchParkRequest(it) }
+                    } else if (isFirstTime) {
+                        isFirstTime = false
+                        _uiState.value = ParkUiState.Loading
                     } else {
                         _uiState.value = ParkUiState.Error("No se encontraron parques")
                     }
@@ -68,20 +71,18 @@ class MainViewModel @Inject constructor(
 
     fun requestPark(parkId: Int) {
         val currentState = _uiState.value as? ParkUiState.Success ?: return
-        // No borramos selectedPark aquí para evitar salto blanco, solo activamos refresco
         _uiState.value = currentState.copy(isRefreshing = true)
         launchParkRequest(parkId)
     }
 
     private fun launchParkRequest(id: Int) {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             requestParkUseCase.execute(RequestParkUseCase.Parameters(id))
-                .catch { e ->
+                .catch { _ ->
                     val lastState = _uiState.value as? ParkUiState.Success
                     if (lastState != null) {
                         _uiState.value = lastState.copy(isRefreshing = false)
-                    } else {
-                        _uiState.value = ParkUiState.Error(e.message ?: "Error al cargar parque")
                     }
                 }
                 .collect { result ->
@@ -89,7 +90,7 @@ class MainViewModel @Inject constructor(
                     if (lastState != null) {
                         _uiState.value = lastState.copy(
                             selectedPark = result.data,
-                            isRefreshing = false // Cerramos el círculo del refresh
+                            isRefreshing = false
                         )
                     }
                 }

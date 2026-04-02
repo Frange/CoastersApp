@@ -27,7 +27,7 @@ fun ParkSelectorTopBar(
     val selectedName = parks.find { it.id == selectedParkId }?.name ?: "Seleccionar Parque"
 
     val blueColor = Color(0xFF00BCD4)
-    val dropDownColor = Color(0xFF1B89AC)
+    val dropDownColor = Color(0xFF005560)
     val backgroundColor = Color(0xFF000000)
 
     Row(

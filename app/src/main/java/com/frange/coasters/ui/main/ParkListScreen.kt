@@ -79,7 +79,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
             }
         }
     ) { paddingValues ->
-        // Sincronización directa con el estado del ViewModel
         val isRefreshing = (state as? ParkUiState.Success)?.isRefreshing ?: false
 
         PullToRefreshBox(
@@ -110,9 +109,11 @@ fun ParkListScreen(viewModel: MainViewModel) {
                             }
                         }
                     } else {
-                        // Mientras se carga el primer parque o se refresca, mostramos el Spinner
                         if (s.isRefreshing || s.selectedPark == null) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 CircularProgressIndicator(color = Color(0xFF2BA9BC))
                             }
                         } else {
