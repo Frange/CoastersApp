@@ -21,17 +21,12 @@ import com.frange.coasters.R
 @Composable
 fun ParkListScreen(viewModel: MainViewModel) {
     val state by viewModel.uiState.collectAsState()
-
-    var currentParkId by remember { mutableStateOf<Int?>(null) }
-
     val pullToRefreshState = rememberPullToRefreshState()
-    val isRefreshing = (state as? ParkUiState.Success)?.isRefreshing ?: false
 
-    LaunchedEffect(state) {
-        if (state is ParkUiState.Success && currentParkId == null) {
-            currentParkId = (state as ParkUiState.Success).availableParks.firstOrNull()?.id
-        }
-    }
+    // Extraemos valores del estado para mayor claridad
+    val successState = state as? ParkUiState.Success
+    val isRefreshing = successState?.isRefreshing ?: false
+    val currentSelectedId = successState?.selectedParkId
 
     Scaffold(
         containerColor = Color.Black,
@@ -60,17 +55,17 @@ fun ParkListScreen(viewModel: MainViewModel) {
                     }
                 }
 
-                (state as? ParkUiState.Success)?.let { successState ->
+                successState?.let { s ->
                     ParkSelectorTopBar(
-                        parks = successState.availableParks,
-                        selectedParkId = successState.selectedParkId,
-                        isRefreshing = successState.isRefreshing,
+                        parks = s.availableParks,
+                        selectedParkId = s.selectedParkId,
+                        isRefreshing = s.isRefreshing,
                         onParkSelected = { parkInfo ->
                             parkInfo.id?.let { viewModel.requestPark(it) }
                         },
                         onToggleFavorite = { viewModel.toggleParkFavorite(it) },
                         onRefreshClick = {
-                            successState.selectedParkId.let { viewModel.requestPark(it) }
+                            s.selectedParkId?.let { viewModel.requestPark(it) }
                         }
                     )
                 }
@@ -80,7 +75,8 @@ fun ParkListScreen(viewModel: MainViewModel) {
         PullToRefreshBox(
             state = pullToRefreshState,
             isRefreshing = isRefreshing,
-            onRefresh = { currentParkId?.let { viewModel.requestPark(it) } },
+            // Al refrescar, pedimos el ID que está marcado actualmente en el estado
+            onRefresh = { currentSelectedId?.let { viewModel.requestPark(it) } },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -101,7 +97,8 @@ fun ParkListScreen(viewModel: MainViewModel) {
                         ) {
                             items(
                                 items = rides,
-                                key = { ride -> "${ride.id}_${ride.name}" }
+                                // Clave única para evitar crashes por nombres duplicados
+                                key = { ride -> "${ride.name}_${ride.id}" }
                             ) { ride ->
                                 RideCard(
                                     ride = ride,
@@ -115,12 +112,18 @@ fun ParkListScreen(viewModel: MainViewModel) {
                                 CircularProgressIndicator(color = Color(0xFF2BA9BC))
                             }
                         } else {
-                            ErrorOrEmptyView(message = "No se encontraron datos", onRetry = { viewModel.requestAllParkInfoList() })
+                            ErrorOrEmptyView(
+                                message = "No se encontraron datos",
+                                onRetry = { viewModel.requestAllParkInfoList() }
+                            )
                         }
                     }
                 }
                 is ParkUiState.Error -> {
-                    ErrorOrEmptyView(message = s.message, onRetry = { viewModel.requestAllParkInfoList() })
+                    ErrorOrEmptyView(
+                        message = s.message,
+                        onRetry = { viewModel.requestAllParkInfoList() }
+                    )
                 }
             }
         }

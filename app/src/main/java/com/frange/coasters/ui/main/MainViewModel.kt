@@ -30,7 +30,6 @@ class MainViewModel @Inject constructor(
     private var parksJob: kotlinx.coroutines.Job? = null
     private var ridesJob: kotlinx.coroutines.Job? = null
 
-    // Guardamos el ID actual para evitar cancelaciones innecesarias
     private var currentLoadedParkId: Int? = null
     private var isFirstTime = true
 
@@ -60,14 +59,23 @@ class MainViewModel @Inject constructor(
                             if (currentState is ParkUiState.Success) {
                                 currentState.copy(availableParks = allParks)
                             } else {
-                                ParkUiState.Success(allParks, null, false)
+                                ParkUiState.Success(
+                                    availableParks = allParks,
+                                    selectedPark = null,
+                                    selectedParkId = 0,
+                                    isRefreshing = false
+                                )
                             }
                         }
 
+                        // Lógica de arranque: Solo ocurre UNA VEZ
                         if (isFirstTime && allParks.isNotEmpty()) {
                             isFirstTime = false
-                            val prefs = prefManager.userPreferencesFlow.first()
-                            val targetId = prefs.lastSelectedParkId ?: allParks.first().id
+                            val savedId = prefManager.userPreferencesFlow.first().lastSelectedParkId
+                            // Si el ID guardado no existe en la lista actual, usamos el primero
+                            val targetId = savedId?.takeIf { id -> allParks.any { it.id == id } }
+                                ?: allParks.first().id
+
                             targetId?.let { requestPark(it) }
                         }
                     }
@@ -80,30 +88,30 @@ class MainViewModel @Inject constructor(
     }
 
     fun requestPark(parkId: Int) {
+        // Persistencia inmediata
         viewModelScope.launch {
             prefManager.saveLastParkId(parkId)
         }
 
-        if (currentLoadedParkId == parkId && ridesJob?.isActive == true) return
+        // Si ya estamos cargando este parque, no reiniciamos el flujo para no perder la reactividad
+        if (currentLoadedParkId == parkId && ridesJob?.isActive == true) {
+            // Si entramos aquí es un pull-to-refresh manual, activamos el círculo de carga
+            _uiState.update { if (it is ParkUiState.Success) it.copy(isRefreshing = true) else it }
+        }
 
         currentLoadedParkId = parkId
 
         _uiState.update { state ->
             if (state is ParkUiState.Success) {
-                state.copy(
-                    selectedParkId = parkId,
-                    isRefreshing = true
-                )
+                state.copy(selectedParkId = parkId, isRefreshing = true)
             } else state
         }
 
         ridesJob?.cancel()
         ridesJob = viewModelScope.launch {
             requestParkUseCase.execute(RequestParkUseCase.Parameters(parkId))
-                .catch { e ->
-                    _uiState.update {
-                        (it as? ParkUiState.Success)?.copy(isRefreshing = false) ?: it
-                    }
+                .catch { _ ->
+                    _uiState.update { (it as? ParkUiState.Success)?.copy(isRefreshing = false) ?: it }
                 }
                 .collect { result ->
                     if (result.status == Status.SUCCESS) {
@@ -120,7 +128,6 @@ class MainViewModel @Inject constructor(
     fun toggleRideFavorite(ride: Ride) {
         viewModelScope.launch {
             ride.name?.let { toggleRideFavoriteUseCase(it) }
-            // No hace falta llamar a nada más. El collect en ridesJob recibirá el cambio.
         }
     }
 
