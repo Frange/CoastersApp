@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.SubdirectoryArrowRight
 import androidx.compose.material3.*
@@ -21,10 +23,12 @@ fun ParkSelectorTopBar(
     selectedParkId: Int?,
     isRefreshing: Boolean,
     onParkSelected: (ParkInfo) -> Unit,
+    onToggleFavorite: (String) -> Unit, // Nuevo callback
     onRefreshClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedName = parks.find { it.id == selectedParkId }?.name ?: "Seleccionar Parque"
+    val selectedPark = parks.find { it.id == selectedParkId }
+    val selectedName = selectedPark?.name ?: "Seleccionar Parque"
 
     val blueColor = Color(0xFF00BCD4)
     val dropDownColor = Color(0xFF005560)
@@ -43,34 +47,50 @@ fun ParkSelectorTopBar(
             tint = blueColor
         )
 
-        Text(
-            text = selectedName,
-            color = Color.White,
+        Row(
             modifier = Modifier
                 .weight(1f)
                 .clickable { expanded = true }
                 .padding(start = 12.dp),
-            fontSize = 16.sp
-        )
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = selectedName,
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+
+            // Estrella si el seleccionado es favorito
+            if (selectedPark?.isFavourite == true) {
+                Spacer(Modifier.width(4.dp))
+                Icon(Icons.Default.Favorite, null, tint = blueColor, modifier = Modifier.size(14.dp))
+            }
+        }
 
         IconButton(onClick = onRefreshClick) {
-            Icon(
-                imageVector = Icons.Default.History,
-                contentDescription = "Refrescar",
-                tint = blueColor
-            )
+            Icon(Icons.Default.History, "Refrescar", tint = blueColor)
         }
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(
-                dropDownColor
-            )
+            modifier = Modifier.background(dropDownColor).width(250.dp)
         ) {
             parks.forEach { park ->
                 DropdownMenuItem(
-                    text = { Text(park.name, color = Color.White) },
+                    text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(park.name, color = Color.White, modifier = Modifier.weight(1f))
+                            IconButton(onClick = { onToggleFavorite(park.name) }) {
+                                Icon(
+                                    imageVector = if (park.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = null,
+                                    tint = if (park.isFavourite) blueColor else Color.White.copy(alpha = 0.5f)
+                                )
+                            }
+                        }
+                    },
                     onClick = {
                         expanded = false
                         onParkSelected(park)

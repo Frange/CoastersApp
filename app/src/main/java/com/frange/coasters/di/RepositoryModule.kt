@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.frange.coasters.data.api.service.QueueApiService
 import com.frange.coasters.data.repository.queue.QueueRepository
 import com.frange.coasters.data.repository.queue.QueueRepositoryImpl
+import com.frange.coasters.data.store.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,8 @@ object RepositoryModule {
     fun providePoiRepository(
         gson: Gson,
         service: QueueApiService,
-        mockApiService: MockApiService
-    ): QueueRepository = QueueRepositoryImpl(gson, service, mockApiService)
+        mockApiService: MockApiService,
+        prefManager: PreferenceManager
+    ): QueueRepository = QueueRepositoryImpl(gson, service, mockApiService, prefManager)
 
 }

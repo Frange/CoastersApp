@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,59 +19,80 @@ import com.frange.coasters.R
 import com.frange.coasters.domain.model.Ride
 
 @Composable
-fun RideCard(ride: Ride) {
-    val backgroundColor = if (ride.isFavourite) Color(0xFF006064) else Color(0xFFE0E0E0)
-    val contentColor = if (ride.isFavourite) Color.White else Color.Black
+fun RideCard(
+    ride: Ride,
+    onToggleFavorite: (Ride) -> Unit
+) {
+    val isFav = ride.isFavourite
+    // Colores: Azul cian oscuro para favoritos, Gris suave para el resto
+    val backgroundColor = if (isFav) Color(0xFF004D40) else Color(0xFF212121)
+    val contentColor = Color.White
+    val accentColor = Color(0xFF00BCD4)
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(54.dp)
+            .height(65.dp) // Un poco más de altura para legibilidad
             .padding(horizontal = 12.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(4.dp),
-        color = backgroundColor
+        shape = RoundedCornerShape(8.dp),
+        color = backgroundColor,
+        tonalElevation = 2.dp
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 2.dp)
+                .padding(start = 12.dp, end = 4.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // Lado izquierdo: Botón Favorito + Nombre
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                if (ride.isFavourite) {
+                IconButton(
+                    onClick = { onToggleFavorite(ride) },
+                    modifier = Modifier.size(36.dp)
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = null,
-                        tint = Color(0xFF00BCD4),
-                        modifier = Modifier.size(18.dp)
+                        imageVector = if (isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Toggle Favorite",
+                        tint = if (isFav) accentColor else contentColor.copy(alpha = 0.5f),
+                        modifier = Modifier.size(22.dp)
                     )
-                    Spacer(Modifier.width(8.dp))
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
                     text = ride.name?.uppercase() ?: "",
                     style = TextStyle(
                         color = contentColor,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
+                        fontSize = 13.sp,
+                        letterSpacing = 0.5.sp
                     ),
-                    maxLines = 1
+                    maxLines = 2,
+                    modifier = Modifier.padding(end = 8.dp)
                 )
             }
 
-            if (ride.waitTime >= 5) {
-                WaitTimeBadge(ride.waitTime)
-            } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.closed_jm),
-                    contentDescription = "Closed",
-                    tint = contentColor.copy(alpha = 0.7f),
-                    modifier = Modifier.size(32.dp)
-                )
+            // Lado derecho: Tiempo de espera o Icono de cerrado
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                if (ride.isOpen) {
+                    // Si el tiempo es 0 o null, podrías mostrar "OPEN" o "0 MIN"
+                    WaitTimeBadge(ride.waitTime)
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.closed_jm),
+                        contentDescription = "Closed",
+                        tint = Color.Red.copy(alpha = 0.8f),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
         }
     }
@@ -78,27 +100,24 @@ fun RideCard(ride: Ride) {
 
 @Composable
 fun WaitTimeBadge(minutes: Int) {
-    val color = when {
-        minutes < 15 -> Color(0xFF2E7D32)
-        minutes < 45 -> Color(0xFFEF6C00)
-        else -> Color(0xFFC62828)
+    val badgeColor = when {
+        minutes < 15 -> Color(0xFF43A047) // Verde: poca espera
+        minutes < 45 -> Color(0xFFFB8C00) // Naranja: espera media
+        else -> Color(0xFFE53935)         // Rojo: mucha espera
     }
 
     Surface(
-        color = color,
-        shape = RoundedCornerShape(4.dp)
+        color = badgeColor,
+        shape = RoundedCornerShape(6.dp)
     ) {
         Text(
             text = "$minutes MIN",
             color = Color.White,
             style = TextStyle(
                 fontWeight = FontWeight.Black,
-                fontSize = 13.sp
+                fontSize = 12.sp
             ),
-            modifier = Modifier.padding(
-                horizontal = 8.dp,
-                vertical = 2.dp
-            )
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +23,12 @@ fun ParkListScreen(viewModel: MainViewModel) {
     val state by viewModel.uiState.collectAsState()
     var currentParkId by remember { mutableStateOf<Int?>(null) }
 
+    val pullToRefreshState = rememberPullToRefreshState()
+    val isRefreshing = (state as? ParkUiState.Success)?.isRefreshing ?: false
+
     LaunchedEffect(state) {
         if (state is ParkUiState.Success && currentParkId == null) {
-            currentParkId = (state as ParkUiState.Success).availableParks.firstOrNull()?.id
+            currentParkId = (state as? ParkUiState.Success)?.availableParks?.firstOrNull()?.id
         }
     }
 
@@ -33,9 +37,7 @@ fun ParkListScreen(viewModel: MainViewModel) {
         topBar = {
             Column(
                 modifier = Modifier
-                    .background(
-                        Color(0xFF2BA9BC)
-                    )
+                    .background(Color(0xFF2BA9BC))
                     .statusBarsPadding()
             ) {
                 Row(
@@ -77,6 +79,10 @@ fun ParkListScreen(viewModel: MainViewModel) {
                                 parkInfo.id?.let { viewModel.requestPark(it) }
                             }
                         },
+                        // SOLUCIÓN AL ERROR: Pasamos el parámetro que faltaba
+                        onToggleFavorite = { parkName ->
+                            viewModel.toggleParkFavorite(parkName)
+                        },
                         onRefreshClick = {
                             currentParkId?.let { viewModel.requestPark(it) }
                         }
@@ -85,9 +91,8 @@ fun ParkListScreen(viewModel: MainViewModel) {
             }
         }
     ) { paddingValues ->
-        val isRefreshing = (state as? ParkUiState.Success)?.isRefreshing ?: false
-
         PullToRefreshBox(
+            state = pullToRefreshState,
             isRefreshing = isRefreshing,
             onRefresh = { currentParkId?.let { viewModel.requestPark(it) } },
             modifier = Modifier
@@ -111,7 +116,10 @@ fun ParkListScreen(viewModel: MainViewModel) {
                             contentPadding = PaddingValues(top = 0.dp, bottom = 16.dp)
                         ) {
                             items(rides) { ride ->
-                                RideCard(ride)
+                                RideCard(
+                                    ride = ride,
+                                    onToggleFavorite = { viewModel.toggleFavorite(it) }
+                                )
                             }
                         }
                     } else {

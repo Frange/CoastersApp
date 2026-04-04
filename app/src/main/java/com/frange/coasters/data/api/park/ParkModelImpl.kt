@@ -16,4 +16,7 @@ class ParkModelImpl @Inject constructor(
         }
     }
 
+    override suspend fun toggleFavorite(rideName: String) {
+        repository.toggleParkFavorite(rideName)
+    }
 }
