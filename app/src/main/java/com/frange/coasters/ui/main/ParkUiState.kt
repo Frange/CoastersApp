@@ -9,7 +9,8 @@ sealed class ParkUiState {
     data class Success(
         val availableParks: List<ParkInfo> = emptyList(),
         val selectedPark: Park? = null,
-        val isRefreshing: Boolean = false
+        val isRefreshing: Boolean = false,
+        val selectedParkId: Int = 0,
     ) : ParkUiState()
 
     data class Error(val message: String) : ParkUiState()

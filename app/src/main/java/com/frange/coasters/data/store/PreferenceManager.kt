@@ -70,18 +70,19 @@ class PreferenceManager @Inject constructor(
         updatePrefs { it.copy(favoriteParkNames = toggleItem(it.favoriteParkNames, parkName)) }
     }
 
+    suspend fun saveLastParkId(id: Int) {
+        updatePrefs { it.copy(lastSelectedParkId = id) }
+    }
+
     private suspend fun updatePrefs(transform: (UserPreferences) -> UserPreferences) {
         context.dataStore.edit { prefs ->
-            val current = try {
-                val json = prefs[KEY_FAVORITES] ?: ""
-                if (json.isEmpty()) UserPreferences(defaultParks, defaultRides)
-                else gson.fromJson(json, UserPreferences::class.java)
-            } catch (e: Exception) { UserPreferences(defaultParks, defaultRides) }
+            val json = prefs[KEY_FAVORITES] ?: ""
+            val current = if (json.isEmpty()) UserPreferences(defaultParks, defaultRides)
+            else try { gson.fromJson(json, UserPreferences::class.java) } catch(e: Exception) { UserPreferences(defaultParks, defaultRides) }
 
             prefs[KEY_FAVORITES] = gson.toJson(transform(current))
         }
     }
 
-    private fun toggleItem(set: Set<String>, item: String) =
-        if (set.contains(item)) set - item else set + item
+    private fun toggleItem(set: Set<String>, item: String) = if (set.contains(item)) set - item else set + item
 }

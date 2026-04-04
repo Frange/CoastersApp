@@ -21,6 +21,7 @@ import com.frange.coasters.R
 @Composable
 fun ParkListScreen(viewModel: MainViewModel) {
     val state by viewModel.uiState.collectAsState()
+
     var currentParkId by remember { mutableStateOf<Int?>(null) }
 
     val pullToRefreshState = rememberPullToRefreshState()
@@ -28,7 +29,7 @@ fun ParkListScreen(viewModel: MainViewModel) {
 
     LaunchedEffect(state) {
         if (state is ParkUiState.Success && currentParkId == null) {
-            currentParkId = (state as? ParkUiState.Success)?.availableParks?.firstOrNull()?.id
+            currentParkId = (state as ParkUiState.Success).availableParks.firstOrNull()?.id
         }
     }
 
@@ -54,37 +55,22 @@ fun ParkListScreen(viewModel: MainViewModel) {
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
-                        Text(
-                            text = "Coasters app",
-                            color = Color.White,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Where magic happens",
-                            color = Color.White.copy(alpha = 0.9f),
-                            fontSize = 14.sp
-                        )
+                        Text(text = "Coasters app", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "Where magic happens", color = Color.White.copy(alpha = 0.9f), fontSize = 14.sp)
                     }
                 }
 
                 (state as? ParkUiState.Success)?.let { successState ->
                     ParkSelectorTopBar(
                         parks = successState.availableParks,
-                        selectedParkId = currentParkId,
+                        selectedParkId = successState.selectedParkId,
                         isRefreshing = successState.isRefreshing,
                         onParkSelected = { parkInfo ->
-                            if (currentParkId != parkInfo.id) {
-                                currentParkId = parkInfo.id
-                                parkInfo.id?.let { viewModel.requestPark(it) }
-                            }
+                            parkInfo.id?.let { viewModel.requestPark(it) }
                         },
-                        // SOLUCIÓN AL ERROR: Pasamos el parámetro que faltaba
-                        onToggleFavorite = { parkName ->
-                            viewModel.toggleParkFavorite(parkName)
-                        },
+                        onToggleFavorite = { viewModel.toggleParkFavorite(it) },
                         onRefreshClick = {
-                            currentParkId?.let { viewModel.requestPark(it) }
+                            successState.selectedParkId.let { viewModel.requestPark(it) }
                         }
                     )
                 }
@@ -106,44 +92,35 @@ fun ParkListScreen(viewModel: MainViewModel) {
                         CircularProgressIndicator(color = Color(0xFF2BA9BC))
                     }
                 }
-
                 is ParkUiState.Success -> {
                     val rides = s.selectedPark?.rideList
-
                     if (!rides.isNullOrEmpty()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(top = 0.dp, bottom = 16.dp)
+                            contentPadding = PaddingValues(bottom = 16.dp)
                         ) {
-                            items(rides) { ride ->
+                            items(
+                                items = rides,
+                                key = { ride -> "${ride.id}_${ride.name}" }
+                            ) { ride ->
                                 RideCard(
                                     ride = ride,
-                                    onToggleFavorite = { viewModel.toggleFavorite(it) }
+                                    onToggleFavorite = { viewModel.toggleRideFavorite(it) }
                                 )
                             }
                         }
                     } else {
                         if (s.isRefreshing || s.selectedPark == null) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(color = Color(0xFF2BA9BC))
                             }
                         } else {
-                            ErrorOrEmptyView(
-                                message = "No se encontraron datos",
-                                onRetry = { viewModel.requestAllParkInfoList() }
-                            )
+                            ErrorOrEmptyView(message = "No se encontraron datos", onRetry = { viewModel.requestAllParkInfoList() })
                         }
                     }
                 }
-
                 is ParkUiState.Error -> {
-                    ErrorOrEmptyView(
-                        message = s.message,
-                        onRetry = { viewModel.requestAllParkInfoList() }
-                    )
+                    ErrorOrEmptyView(message = s.message, onRetry = { viewModel.requestAllParkInfoList() })
                 }
             }
         }

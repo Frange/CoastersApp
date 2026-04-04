@@ -17,6 +17,7 @@ interface QueueRepository {
 
     fun requestRideList(): Flow<AppResult<List<Ride>>>
 
+    suspend fun toggleRideFavorite(rideName: String)
     suspend fun toggleParkFavorite(parkName: String)
 
     fun getCurrentCompanyList(): List<Company>

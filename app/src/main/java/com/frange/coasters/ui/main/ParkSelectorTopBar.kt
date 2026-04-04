@@ -23,7 +23,7 @@ fun ParkSelectorTopBar(
     selectedParkId: Int?,
     isRefreshing: Boolean,
     onParkSelected: (ParkInfo) -> Unit,
-    onToggleFavorite: (String) -> Unit, // Nuevo callback
+    onToggleFavorite: (String) -> Unit,
     onRefreshClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }

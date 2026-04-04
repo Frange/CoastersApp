@@ -1,15 +1,15 @@
 package com.frange.coasters.ui.main
 
 import androidx.lifecycle.*
-import com.frange.coasters.domain.base.AppResult
 import com.frange.coasters.domain.base.Status
 import com.frange.coasters.domain.model.Company
 import com.frange.coasters.domain.model.ParkInfo
 import com.frange.coasters.domain.model.Ride
 import com.frange.coasters.domain.usecase.RequestAllParkInfoListUseCase
 import com.frange.coasters.domain.usecase.RequestParkUseCase
-import com.frange.coasters.domain.usecase.ToggleFavoriteUseCase
+import com.frange.coasters.domain.usecase.ToggleRideFavoriteUseCase
 import com.frange.coasters.domain.usecase.ToggleParkFavoriteUseCase
+import com.frange.coasters.data.store.PreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,8 +19,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val requestCompanyListUseCase: RequestAllParkInfoListUseCase,
     private val requestParkUseCase: RequestParkUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val toggleParkFavoriteUseCase: ToggleParkFavoriteUseCase
+    private val toggleRideFavoriteUseCase: ToggleRideFavoriteUseCase,
+    private val toggleParkFavoriteUseCase: ToggleParkFavoriteUseCase,
+    private val prefManager: PreferenceManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ParkUiState>(ParkUiState.Loading)
@@ -28,6 +29,9 @@ class MainViewModel @Inject constructor(
 
     private var parksJob: kotlinx.coroutines.Job? = null
     private var ridesJob: kotlinx.coroutines.Job? = null
+
+    // Guardamos el ID actual para evitar cancelaciones innecesarias
+    private var currentLoadedParkId: Int? = null
     private var isFirstTime = true
 
     init {
@@ -42,35 +46,29 @@ class MainViewModel @Inject constructor(
                     _uiState.value = ParkUiState.Error(e.message ?: "Error de conexión")
                 }
                 .collect { result ->
-                    // Comparación directa con el status de tu AppResult
                     if (result.status == Status.SUCCESS) {
                         val rawData = result.data as? List<Any?> ?: emptyList()
-                        val allParks = mutableListOf<ParkInfo>()
-
-                        rawData.forEach { item ->
+                        val allParks = rawData.flatMap { item ->
                             when (item) {
-                                is Company -> item.parks?.let { allParks.addAll(it) }
-                                is ParkInfo -> allParks.add(item)
+                                is Company -> item.parks ?: emptyList()
+                                is ParkInfo -> listOf(item)
+                                else -> emptyList()
                             }
-                        }
-
-                        val cleanParks = allParks.filter { it.id != null }.distinctBy { it.id }
+                        }.filter { it.id != null }.distinctBy { it.id }
 
                         _uiState.update { currentState ->
                             if (currentState is ParkUiState.Success) {
-                                currentState.copy(availableParks = cleanParks)
+                                currentState.copy(availableParks = allParks)
                             } else {
-                                ParkUiState.Success(
-                                    availableParks = cleanParks,
-                                    selectedPark = null,
-                                    isRefreshing = false
-                                )
+                                ParkUiState.Success(allParks, null, false)
                             }
                         }
 
-                        if (isFirstTime && cleanParks.isNotEmpty()) {
+                        if (isFirstTime && allParks.isNotEmpty()) {
                             isFirstTime = false
-                            cleanParks.first().id?.let { requestPark(it) }
+                            val prefs = prefManager.userPreferencesFlow.first()
+                            val targetId = prefs.lastSelectedParkId ?: allParks.first().id
+                            targetId?.let { requestPark(it) }
                         }
                     }
                 }
@@ -82,24 +80,36 @@ class MainViewModel @Inject constructor(
     }
 
     fun requestPark(parkId: Int) {
-        val currentState = _uiState.value as? ParkUiState.Success ?: return
-        _uiState.value = currentState.copy(isRefreshing = true)
+        viewModelScope.launch {
+            prefManager.saveLastParkId(parkId)
+        }
+
+        if (currentLoadedParkId == parkId && ridesJob?.isActive == true) return
+
+        currentLoadedParkId = parkId
+
+        _uiState.update { state ->
+            if (state is ParkUiState.Success) {
+                state.copy(
+                    selectedParkId = parkId,
+                    isRefreshing = true
+                )
+            } else state
+        }
 
         ridesJob?.cancel()
         ridesJob = viewModelScope.launch {
             requestParkUseCase.execute(RequestParkUseCase.Parameters(parkId))
-                .catch { _ ->
-                    _uiState.update { (it as? ParkUiState.Success)?.copy(isRefreshing = false) ?: it }
+                .catch { e ->
+                    _uiState.update {
+                        (it as? ParkUiState.Success)?.copy(isRefreshing = false) ?: it
+                    }
                 }
                 .collect { result ->
-                    // Comparación directa con Status.SUCCESS
                     if (result.status == Status.SUCCESS) {
                         _uiState.update { state ->
                             if (state is ParkUiState.Success) {
-                                state.copy(
-                                    selectedPark = result.data,
-                                    isRefreshing = false
-                                )
+                                state.copy(selectedPark = result.data, isRefreshing = false)
                             } else state
                         }
                     }
@@ -107,10 +117,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun toggleFavorite(ride: Ride) {
-        val name = ride.name ?: return
+    fun toggleRideFavorite(ride: Ride) {
         viewModelScope.launch {
-            toggleFavoriteUseCase(name)
+            ride.name?.let { toggleRideFavoriteUseCase(it) }
+            // No hace falta llamar a nada más. El collect en ridesJob recibirá el cambio.
         }
     }
 

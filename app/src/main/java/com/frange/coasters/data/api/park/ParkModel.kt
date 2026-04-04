@@ -8,5 +8,7 @@ interface ParkModel {
 
     fun get(id: Int): Flow<AppResult<Park>>
 
-    suspend fun toggleFavorite(rideName: String)
+    suspend fun toggleRideFavorite(rideName: String)
+
+    suspend fun toggleParkFavorite(parkName: String)
 }
