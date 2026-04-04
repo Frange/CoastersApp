@@ -24,7 +24,6 @@ fun RideCard(
     onToggleFavorite: (Ride) -> Unit
 ) {
     val isFav = ride.isFavourite
-    // Colores: Azul cian oscuro para favoritos, Gris suave para el resto
     val backgroundColor = if (isFav) Color(0xFF004D40) else Color(0xFF212121)
     val contentColor = Color.White
     val accentColor = Color(0xFF00BCD4)
@@ -32,7 +31,7 @@ fun RideCard(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(65.dp) // Un poco más de altura para legibilidad
+            .height(65.dp)
             .padding(horizontal = 12.dp, vertical = 4.dp),
         shape = RoundedCornerShape(8.dp),
         color = backgroundColor,
@@ -45,7 +44,6 @@ fun RideCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Lado izquierdo: Botón Favorito + Nombre
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
@@ -77,13 +75,11 @@ fun RideCard(
                 )
             }
 
-            // Lado derecho: Tiempo de espera o Icono de cerrado
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(end = 8.dp)
             ) {
                 if (ride.isOpen) {
-                    // Si el tiempo es 0 o null, podrías mostrar "OPEN" o "0 MIN"
                     WaitTimeBadge(ride.waitTime)
                 } else {
                     Icon(
@@ -101,9 +97,9 @@ fun RideCard(
 @Composable
 fun WaitTimeBadge(minutes: Int) {
     val badgeColor = when {
-        minutes < 15 -> Color(0xFF43A047) // Verde: poca espera
-        minutes < 45 -> Color(0xFFFB8C00) // Naranja: espera media
-        else -> Color(0xFFE53935)         // Rojo: mucha espera
+        minutes < 15 -> Color(0xFF43A047)
+        minutes < 45 -> Color(0xFFFB8C00)
+        else -> Color(0xFFE53935)
     }
 
     Surface(

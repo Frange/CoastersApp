@@ -23,7 +23,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
     val state by viewModel.uiState.collectAsState()
     val pullToRefreshState = rememberPullToRefreshState()
 
-    // Extraemos valores del estado para mayor claridad
     val successState = state as? ParkUiState.Success
     val isRefreshing = successState?.isRefreshing ?: false
     val currentSelectedId = successState?.selectedParkId
@@ -75,7 +74,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
         PullToRefreshBox(
             state = pullToRefreshState,
             isRefreshing = isRefreshing,
-            // Al refrescar, pedimos el ID que está marcado actualmente en el estado
             onRefresh = { currentSelectedId?.let { viewModel.requestPark(it) } },
             modifier = Modifier
                 .fillMaxSize()
@@ -97,7 +95,6 @@ fun ParkListScreen(viewModel: MainViewModel) {
                         ) {
                             items(
                                 items = rides,
-                                // Clave única para evitar crashes por nombres duplicados
                                 key = { ride -> "${ride.name}_${ride.id}" }
                             ) { ride ->
                                 RideCard(

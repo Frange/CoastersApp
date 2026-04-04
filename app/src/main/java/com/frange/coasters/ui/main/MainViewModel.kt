@@ -68,11 +68,9 @@ class MainViewModel @Inject constructor(
                             }
                         }
 
-                        // Lógica de arranque: Solo ocurre UNA VEZ
                         if (isFirstTime && allParks.isNotEmpty()) {
                             isFirstTime = false
                             val savedId = prefManager.userPreferencesFlow.first().lastSelectedParkId
-                            // Si el ID guardado no existe en la lista actual, usamos el primero
                             val targetId = savedId?.takeIf { id -> allParks.any { it.id == id } }
                                 ?: allParks.first().id
 
@@ -88,14 +86,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun requestPark(parkId: Int) {
-        // Persistencia inmediata
         viewModelScope.launch {
             prefManager.saveLastParkId(parkId)
         }
 
-        // Si ya estamos cargando este parque, no reiniciamos el flujo para no perder la reactividad
         if (currentLoadedParkId == parkId && ridesJob?.isActive == true) {
-            // Si entramos aquí es un pull-to-refresh manual, activamos el círculo de carga
             _uiState.update { if (it is ParkUiState.Success) it.copy(isRefreshing = true) else it }
         }
 

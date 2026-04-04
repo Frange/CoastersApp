@@ -61,7 +61,6 @@ fun ParkSelectorTopBar(
                 modifier = Modifier.weight(1f, fill = false)
             )
 
-            // Estrella si el seleccionado es favorito
             if (selectedPark?.isFavourite == true) {
                 Spacer(Modifier.width(4.dp))
                 Icon(Icons.Default.Favorite, null, tint = blueColor, modifier = Modifier.size(14.dp))
