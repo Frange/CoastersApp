@@ -35,19 +35,13 @@ class WidgetRenderFactory(
         val ride = rideList[position]
         val views = RemoteViews(context.packageName, R.layout.widget_list_item)
 
-        // 1. CAMBIO DE FONDO DINÁMICO
-        // Si es favorita, ponemos un fondo diferente (por ejemplo, un azul oscuro o gris resaltado)
-        // Si no, el fondo por defecto del widget
         val backgroundRes = if (ride.isFavourite) {
             R.color.widget_row_fav_background
         } else {
             R.color.widget_row_background
         }
 
-        // Aplicamos el recurso de fondo al ID del contenedor principal del item
         views.setInt(R.id.ll_widget_item, "setBackgroundResource", backgroundRes)
-
-        // 2. TEXTOS Y COLORES
         views.setTextViewText(R.id.tv_widget_ride_name, ride.name)
 
         if (ride.isOpen) {

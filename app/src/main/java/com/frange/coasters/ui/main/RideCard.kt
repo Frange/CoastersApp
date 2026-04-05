@@ -24,7 +24,7 @@ fun RideCard(
     onToggleFavorite: (Ride) -> Unit
 ) {
     val isFav = ride.isFavourite
-    val backgroundColor = if (isFav) Color(0xFF004D40) else Color(0xFF212121)
+    val backgroundColor = if (isFav) Color(0xFF006064) else Color(0xFFE0E0E0)
     val contentColor = Color.White
     val accentColor = Color(0xFF00BCD4)
 
@@ -85,7 +85,7 @@ fun RideCard(
                     Icon(
                         painter = painterResource(id = R.drawable.closed_jm),
                         contentDescription = "Closed",
-                        tint = Color.Red.copy(alpha = 0.8f),
+                        tint = Color.White.copy(alpha = 0.8f),
                         modifier = Modifier.size(28.dp)
                     )
                 }
