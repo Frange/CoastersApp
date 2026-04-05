@@ -41,7 +41,7 @@ class WidgetRenderFactory(
             R.color.widget_row_background
         }
 
-        views.setInt(R.id.ll_widget_item, "setBackgroundResource", backgroundRes)
+        views.setInt(R.id.ll_widget_name_item, "setBackgroundResource", backgroundRes)
         views.setTextViewText(R.id.tv_widget_ride_name, ride.name)
 
         if (ride.isOpen) {
@@ -54,10 +54,14 @@ class WidgetRenderFactory(
                 else -> R.color.wait_high
             }
 
-            views.setTextColor(R.id.tv_widget_ride_time, context.getColor(colorResId))
+            views.setInt(R.id.ll_widget_time_item, "setBackgroundResource", colorResId)
         } else {
             views.setTextViewText(R.id.tv_widget_ride_time, "CLOSED")
-            views.setTextColor(R.id.tv_widget_ride_time, context.getColor(R.color.always_red))
+            views.setInt(
+                R.id.ll_widget_time_item,
+                "setBackgroundResource",
+                context.getColor(R.color.always_red)
+            )
         }
 
         val fillInIntent = Intent()
@@ -66,7 +70,9 @@ class WidgetRenderFactory(
         return views
     }
 
-    override fun getLoadingView(): RemoteViews = RemoteViews(context.packageName, R.layout.widget_loading)
+    override fun getLoadingView(): RemoteViews =
+        RemoteViews(context.packageName, R.layout.widget_loading)
+
     override fun getViewTypeCount(): Int = 1
     override fun getItemId(position: Int): Long = position.toLong()
     override fun hasStableIds(): Boolean = true

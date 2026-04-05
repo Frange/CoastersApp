@@ -25,7 +25,8 @@ fun RideCard(
     onToggleFavorite: (Ride) -> Unit
 ) {
     val isFav = ride.isFavourite
-    val backgroundColor = if (isFav) Color(0xFF006064) else Color(0xFFE0E0E0)
+
+    val backgroundColor = if (isFav) Color(0xFF006064) else Color(0xFF212121)
     val contentColor = Color.White
     val accentColor = Color(0xFF00BCD4)
 
