@@ -45,12 +45,19 @@ class WidgetRenderFactory(
         views.setTextViewText(R.id.tv_widget_ride_name, ride.name)
 
         if (ride.isOpen) {
-            val time = ride.waitTime
-            views.setTextViewText(R.id.tv_widget_ride_time, "$time min")
-            views.setTextColor(R.id.tv_widget_ride_time, Color.GREEN)
+            val minutes = ride.waitTime ?: 0
+            views.setTextViewText(R.id.tv_widget_ride_time, "$minutes MIN")
+
+            val colorResId = when {
+                minutes <= 15 -> R.color.wait_low
+                minutes < 45 -> R.color.wait_medium
+                else -> R.color.wait_high
+            }
+
+            views.setTextColor(R.id.tv_widget_ride_time, context.getColor(colorResId))
         } else {
             views.setTextViewText(R.id.tv_widget_ride_time, "CLOSED")
-            views.setTextColor(R.id.tv_widget_ride_time, Color.RED)
+            views.setTextColor(R.id.tv_widget_ride_time, context.getColor(R.color.always_red))
         }
 
         val fillInIntent = Intent()

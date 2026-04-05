@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -96,11 +97,13 @@ fun RideCard(
 
 @Composable
 fun WaitTimeBadge(minutes: Int) {
-    val badgeColor = when {
-        minutes < 15 -> Color(0xFF43A047)
-        minutes < 45 -> Color(0xFFFB8C00)
-        else -> Color(0xFFE53935)
+    val colorResId = when {
+        minutes <= 15 -> R.color.wait_low
+        minutes < 45 -> R.color.wait_medium
+        else -> R.color.wait_high
     }
+
+    val badgeColor = colorResource(id = colorResId)
 
     Surface(
         color = badgeColor,

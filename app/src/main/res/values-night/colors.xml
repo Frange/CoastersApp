@@ -22,4 +22,8 @@
     <color name="widget_row_background">@color/always_dark_gray</color>
     <color name="widget_row_fav_background">#006064</color>
 
+    <color name="wait_low">#43A047</color>
+    <color name="wait_medium">#FB8C00</color>
+    <color name="wait_high">#E53935</color>
+
 </resources>
