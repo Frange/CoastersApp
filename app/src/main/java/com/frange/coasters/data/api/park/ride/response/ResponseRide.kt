@@ -26,7 +26,7 @@ data class ResponseRide(
 fun ResponseRide.toRide() = Ride(
     id = id,
     name = name,
-    isOpen = is_open,
+    isOpen = is_open && wait_time > 1,
     waitTime = wait_time,
     lastUpdated = last_updated,
 )

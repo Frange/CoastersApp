@@ -28,7 +28,7 @@ class WidgetRenderFactory(
     override fun getCount(): Int = rideList.size
 
     override fun getViewAt(position: Int): RemoteViews {
-        if (position >= rideList.size) {
+        if (position < 0 || position >= rideList.size) {
             return RemoteViews(context.packageName, R.layout.widget_loading)
         }
 
@@ -47,6 +47,7 @@ class WidgetRenderFactory(
         if (ride.isOpen) {
             val minutes = ride.waitTime ?: 0
             views.setTextViewText(R.id.tv_widget_ride_time, "$minutes MIN")
+            views.setTextColor(R.id.tv_widget_ride_time, context.getColor(R.color.always_black))
 
             val colorResId = when {
                 minutes <= 15 -> R.color.wait_low
@@ -54,14 +55,15 @@ class WidgetRenderFactory(
                 else -> R.color.wait_high
             }
 
-            views.setInt(R.id.ll_widget_time_item, "setBackgroundResource", colorResId)
-        } else {
-            views.setTextViewText(R.id.tv_widget_ride_time, "CLOSED")
             views.setInt(
                 R.id.ll_widget_time_item,
                 "setBackgroundResource",
-                context.getColor(R.color.always_red)
+                colorResId
             )
+        } else {
+            views.setTextViewText(R.id.tv_widget_ride_time, "CLOSED")
+            views.setTextColor(R.id.tv_widget_ride_time, context.getColor(R.color.always_red))
+            views.setInt(R.id.ll_widget_time_item, "setBackgroundResource", R.color.always_black)
         }
 
         val fillInIntent = Intent()
